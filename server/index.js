@@ -6,6 +6,10 @@ const fs = require("fs");
 const app = express();
 app.use(express.json());
 
+app.get("/", (req, res) => {
+  res.send("Welcome to the E.Leclerc Product Search API");
+});
+
 app.post("/search", async (req, res) => {
   const ean = req.body.ean;
   if (!ean) return res.status(400).json({ error: "Missing 'ean'" });
