@@ -26,6 +26,7 @@ async function handleSearch(ean, res) {
 
     try {
         const cookies = fs.readFileSync("cookies.txt", "utf8").trim();
+        console.log("Using cookies:", cookies);
         const response = await axios.post(
         "https://www.e.leclerc/api/rest/live-api/product-search",
         payload,
