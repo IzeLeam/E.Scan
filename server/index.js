@@ -33,7 +33,6 @@ app.post("/search", async (req, res) => {
           Origin: "https://www.e.leclerc",
           Referer: `https://www.e.leclerc/recherche?q=${ean}&result=0`,
         },
-        httpsAgent: new https.Agent({ rejectUnauthorized: false }), // à ajuster selon ton VPS
       }
     );
 
@@ -42,4 +41,9 @@ app.post("/search", async (req, res) => {
     console.error("Erreur API:", error.response?.data || error.message);
     res.status(500).json({ error: "Failed to fetch data" });
   }
+});
+
+const PORT = process.env.PORT || 9999;
+app.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}`);
 });
