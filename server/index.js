@@ -1,11 +1,11 @@
 const express = require("express");
 const axios = require("axios");
 const fs = require("fs");
-const { CookieJar } = require("tough-cookie");
-const { exec } = require("child_process");
+const cors = require("cors");
 const path = require("path");
 
 const app = express();
+app.use(cors());
 app.use(express.json());
 
 // GET /
