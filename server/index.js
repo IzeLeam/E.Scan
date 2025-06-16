@@ -55,14 +55,19 @@ async function handleSearch(ean, res) {
     );
 
     const rawData = response.data;
+    data = {};
 
     const images = rawData.items?.[0]?.variants?.[0]?.attributes
       ?.filter(attr => attr.type === "image")
       ?.map(attr => attr.value.url);
 
-    console.log("Images found:", images);
+    data.images = images || [];
+    data.rawData = rawData;
 
-    res.json(response.data);
+    res.status(200).json({
+      data: data,
+      message: "Search completed successfully",
+    });
   } catch (err) {
     console.error("Error while fetching data:", err.response?.status, err.response?.data);
     res.status(500).json({
