@@ -4,6 +4,8 @@ const fs = require("fs");
 const cors = require("cors");
 const path = require("path");
 
+import get from "lodash/get";
+
 const app = express();
 app.use(cors({
   origin: 'https://escan.lucaprc.fr',
@@ -53,6 +55,14 @@ async function handleSearch(ean, res) {
       payload,
       { headers }
     );
+
+    const rawData = response.data;
+
+    const images = rawData.items?.[0]?.variants?.[0]?.attributes
+      ?.filter(attr => attr.type === "image")
+      ?.map(attr => attr.value.url);
+
+    console.log("Images found:", images);
 
     res.json(response.data);
   } catch (err) {

@@ -6,8 +6,8 @@ export default function SearchInput() {
   const [data, setData] = useState(null);
 
   const handleChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const ean = e.target.value;
-    if (/^\d+$/.test(ean)) {
+    const ean = e.target.value.replaceAll(' ', '');
+    if (/^\d{13}$/.test(ean)) {
       const res = await fetch(`https://api.escan.lucaprc.fr/search?ean=${ean}`);
       const fetchedData = await res.json();
       setData(fetchedData);
