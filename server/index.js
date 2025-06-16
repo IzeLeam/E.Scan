@@ -4,8 +4,6 @@ const fs = require("fs");
 const cors = require("cors");
 const path = require("path");
 
-import get from "lodash/get";
-
 const app = express();
 app.use(cors({
   origin: 'https://escan.lucaprc.fr',
