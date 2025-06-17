@@ -1,38 +1,71 @@
 "use client";
 
 import { useState } from "react";
+import Slider from "react-slick";
 
 export default function SearchInput() {
-  const [data, setData] = useState(null);
+  const [data, setData] = useState<null | {
+    title: string;
+    description: string;
+    images: string[];
+    price: number;
+    stock: number;
+  }>(null);
 
   const handleChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const ean = e.target.value.replaceAll(' ', '');
+    const ean = e.target.value.replaceAll(" ", "");
     if (/^\d{13}$/.test(ean)) {
-      const res = await fetch(`https://api.escan.lucaprc.fr/search?ean=${ean}`);
+      const res = await fetch(
+        `https://api.escan.lucaprc.fr/search?ean=${ean}`
+      );
       const fetchedData = await res.json();
       setData(fetchedData);
     }
   };
 
+  const sliderSettings = {
+    dots: true,
+    infinite: true,
+    speed: 500,
+    slidesToShow: 1,
+    slidesToScroll: 1,
+    arrows: true,
+  };
+
   return (
-    <div style={{ color: "white" }}>
+    <div className="text-white p-4 max-w-md mx-auto">
       <input
         type="text"
         pattern="\d*"
         inputMode="numeric"
-        placeholder="Enter EAN code"
+        placeholder="Entrez un code EAN"
         onChange={handleChange}
-        style={{
-          marginBottom: "20px",
-          padding: "10px",
-          borderRadius: "5px",
-          border: "1px solid #ccc",
-        }}
+        className="mb-4 w-full px-4 py-2 rounded border border-gray-300 text-black"
       />
+
       {data && (
-        <pre style={{ whiteSpace: "pre-wrap", wordWrap: "break-word" }}>
-          {JSON.stringify(data, null, 2)}
-        </pre>
+        <div className="bg-white text-black rounded-lg p-4 shadow-md space-y-4">
+          <h2 className="text-xl font-semibold text-center">{data.title}</h2>
+
+          <div className="rounded overflow-hidden">
+            <Slider {...sliderSettings}>
+              {data.images.map((img, index) => (
+                <div key={index}>
+                  <img
+                    src={img}
+                    alt={`Image ${index + 1}`}
+                    className="mx-auto h-64 object-contain"
+                  />
+                </div>
+              ))}
+            </Slider>
+          </div>
+
+          <p className="text-sm text-gray-800">{data.description}</p>
+          <div className="text-sm text-gray-600">
+            <strong>Stock :</strong> {data.stock}
+          </div>
+        </div>
       )}
     </div>
   );
