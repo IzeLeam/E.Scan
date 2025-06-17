@@ -10,6 +10,7 @@ export default function SearchInput() {
     images: string[];
     price: number;
     stock: number;
+    rawData: string;
   }>(null);
 
   const handleChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -65,6 +66,7 @@ export default function SearchInput() {
           <div className="text-sm text-gray-600">
             <strong>Stock :</strong> {data.stock}
           </div>
+          <p>{data.rawData}</p>
         </div>
       )}
     </div>

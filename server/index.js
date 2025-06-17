@@ -89,6 +89,9 @@ async function handleSearch(ean, res) {
     const stock = offer.stock || "No stock information found";
     data.stock = stock;
 
+    //Include rawData in response
+    data.rawData = rawData;
+
     res.status(200).json(data);
   } catch (err) {
     console.error("Error while fetching data:", err.response?.status, err.response?.data);
