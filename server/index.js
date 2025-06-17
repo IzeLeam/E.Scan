@@ -70,8 +70,8 @@ async function handleSearch(ean, res) {
     const images = rawData.items?.[0]?.variants?.[0]?.attributes
       ?.filter(attr => attr.type === "image")
       ?.map(attr => attr.value.url) || [];
-    data.rawData = rawData;
-
+    data.images = images;
+    
     // Get the offer of our local store (data.offer)
     const offer = rawData.items?.[0]?.variants?.[0]?.offers?.find(
       offer => offer.shop?.signCode === "0772"
