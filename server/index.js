@@ -6,9 +6,10 @@ const path = require("path");
 
 const app = express();
 app.use(cors({
-  origin: ['https://escan.lucaprc.fr', 'https://localhost:3000'],
+  origin: 'https://escan.lucaprc.fr',
   methods: ['GET', 'POST'],
-  credentials: true
+  credentials: true,
+  allowedDevOrigins: ['http://localhost:3000']
 }));
 app.use(express.json());
 
