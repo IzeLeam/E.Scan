@@ -57,12 +57,37 @@ async function handleSearch(ean, res) {
     const rawData = response.data;
     data = {};
 
+    // Get the title (data.title)
+    const title = rawData.items?.[0]?.label || "No title found";
+    data.title = title;
+
+    // Get the description (data.description)
+    const description = rawData.items?.[0]?.variants?.[0]?.attributes
+      ?.find(attr => attr.code == "description")?.value || "No description found";
+    data.description = description;
+
+    // Get the images (data.images[])
     const images = rawData.items?.[0]?.variants?.[0]?.attributes
       ?.filter(attr => attr.type === "image")
-      ?.map(attr => attr.value.url);
-
-    data.images = images || [];
+      ?.map(attr => attr.value.url) || [];
     data.rawData = rawData;
+
+    // Get the offer of our local store (data.offer)
+    const offer = rawData.items?.[0]?.variants?.[0]?.offers?.find(
+      offer => offer.shop?.signCode === "0772"
+    ) || {};
+
+    if (!offer) {
+      return res.status(404).json({ error: "No offer found for the local store" });
+    }
+
+    // Get the price (data.price)
+    const price = offer.basePrice?.price?.priceWithAllTaxes || "No price found";
+    data.price = price;
+
+    // Get the stock (data.stock)
+    const stock = offer.stock || "No stock information found";
+    data.stock = stock;
 
     res.status(200).json({
       data: data,
