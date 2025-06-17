@@ -66,7 +66,7 @@ export default function SearchInput() {
           <div className="text-sm text-gray-600">
             <strong>Stock :</strong> {data.stock}
           </div>
-          <p>{data.rawData}</p>
+          <p>{JSON.stringify(data.rawData)}</p>
         </div>
       )}
     </div>
