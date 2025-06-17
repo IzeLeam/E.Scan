@@ -71,7 +71,7 @@ async function handleSearch(ean, res) {
       ?.filter(attr => attr.type === "image")
       ?.map(attr => attr.value.url) || [];
     data.images = images;
-    
+
     // Get the offer of our local store (data.offer)
     const offer = rawData.items?.[0]?.variants?.[0]?.offers?.find(
       offer => offer.shop?.signCode === "0772"
@@ -89,10 +89,7 @@ async function handleSearch(ean, res) {
     const stock = offer.stock || "No stock information found";
     data.stock = stock;
 
-    res.status(200).json({
-      data: data,
-      message: "Search completed successfully",
-    });
+    res.status(200).json(data);
   } catch (err) {
     console.error("Error while fetching data:", err.response?.status, err.response?.data);
     res.status(500).json({
