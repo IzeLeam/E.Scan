@@ -33,14 +33,14 @@ export default function SearchInput() {
   };
 
   return (
-    <div className="text-white p-4 max-w-md mx-auto">
+    <div className="text-white p-4 max-w-md mx-auto h-screen">
       <input
         type="text"
         pattern="\d*"
         inputMode="numeric"
         placeholder="Entrez un code EAN"
         onChange={handleChange}
-        className="mb-4 w-full px-4 py-2 rounded border border-gray-300 text-black"
+        className="mb-4 w-full px-4 py-2 rounded border border-gray-300"
       />
 
       {data && (
