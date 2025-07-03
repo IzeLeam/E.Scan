@@ -1,10 +1,10 @@
 "use client";
 
 import { useRef, useState } from "react";
-import Slider from "react-slick";
-
+import SearchResult from "./SearchResult";
 export default function SearchInput() {
   const [eanValue, setEanValue] = useState("");
+  const [autoScroll, setAutoScroll] = useState(true);
   const [data, setData] = useState<null | {
     title: string;
     description: string;
@@ -15,16 +15,28 @@ export default function SearchInput() {
   }>(null);
 
   const inputRef = useRef<HTMLInputElement>(null);
+  const resultRef = useRef<HTMLDivElement>(null);
 
   const handleChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const ean = e.target.value.replaceAll(" ", "");
     setEanValue(ean);
+
     if (/^\d{13}$/.test(ean)) {
-      const res = await fetch(
-        `https://api.escan.lucaprc.fr/search?ean=${ean}`
-      );
-      const fetchedData = await res.json();
-      setData(fetchedData);
+      try {
+        const res = await fetch(
+          `https://api.escan.lucaprc.fr/search?ean=${ean}`
+        );
+        const fetchedData = await res.json();
+        setData(fetchedData);
+        if (autoScroll) {
+          setTimeout(() => {
+            resultRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+          }, 100);
+        }
+      } catch (error) {
+        console.error("Erreur lors de la récupération des données", error);
+        setData(null);
+      }
     } else {
       setData(null);
     }
@@ -36,68 +48,58 @@ export default function SearchInput() {
     inputRef.current?.focus();
   };
 
-  const sliderSettings = {
-    dots: true,
-    infinite: true,
-    speed: 500,
-    slidesToShow: 1,
-    slidesToScroll: 1,
-    arrows: true,
-  };
-
   return (
-    <div className="text-white p-4 max-w-md mx-auto relative">
-      <div className="relative mb-4">
-        <input
-          ref={inputRef}
-          type="text"
-          pattern="\d*"
-          inputMode="numeric"
-          placeholder="Entrez un code EAN"
-          value={eanValue}
-          onChange={handleChange}
-          className="w-full px-4 py-2 rounded border border-gray-300 pr-10"
-        />
-        {eanValue && (
-          <button
-            onClick={handleClear}
-            className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-white"
-            aria-label="Effacer"
+    <>
+      <div className="p-4 max-w-md min-h-[calc(100vh-56px)] mx-auto flex flex-col items-center justify-center">
+        <div className="absolute top-5 right-5 flex items-center space-x-1 text-sm text-white z-10">
+          <label htmlFor="scroll-toggle" className="font-bold opacity-25">Auto-Scroll</label>
+          <input
+            id="scroll-toggle"
+            type="checkbox"
+            checked={autoScroll}
+            onChange={() => setAutoScroll(!autoScroll)}
+            className="hidden"
+          />
+          <label
+            htmlFor="scroll-toggle"
+            className={`w-10 h-5 flex items-center border-1 rounded-full p-1 transition ${
+              autoScroll ? "bg-(--foreground)" : "bg-(--background)"
+            }`}
           >
-            &#10005;
-          </button>
-        )}
-      </div>
-
-      {data && (
-        <div className="bg-white text-black rounded-lg p-4 shadow-md space-y-4">
-          <h2 className="text-xl font-semibold text-center">{data.title}</h2>
-
-          <div className="rounded overflow-hidden">
-            <Slider {...sliderSettings}>
-              {data.images.map((img, index) => (
-                <div key={index}>
-                  <img
-                    src={img}
-                    alt={`Image ${index + 1}`}
-                    className="mx-auto h-64 object-contain"
-                  />
-                </div>
-              ))}
-            </Slider>
-          </div>
-
-          <p className="text-sm text-gray-800">{data.description}</p>
-          <div className="text-sm text-gray-600 space-y-1">
-            <div>
-              <strong>Prix :</strong> {data.price} €
-            </div>
-            <div>
-              <strong>Stock :</strong> {data.stock}
-            </div>
-          </div>
+            <div
+              className={`bg-white w-3 h-3 rounded-full shadow-md transform transition ${
+                autoScroll ? "translate-x-4" : "translate-x-0"
+              }`}
+            />
+          </label>
         </div>
-      )}
-    </div>
+
+        <div className="relative w-full mb-4">
+          <input
+            ref={inputRef}
+            type="text"
+            pattern="\d*"
+            inputMode="numeric"
+            placeholder="Entrez un code EAN"
+            value={eanValue}
+            onChange={handleChange}
+            className="w-full px-4 py-2 rounded border pr-10 text-white"
+          />
+          {eanValue && (
+            <button
+              onClick={handleClear}
+              className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-white"
+              aria-label="Effacer"
+            >
+              &#10005;
+            </button>
+          )}
+        </div>
+
+      </div>
+      <div ref={resultRef}>
+        {data ? <SearchResult data={data} /> : <></>}
+      </div>
+    </>
   );
 }

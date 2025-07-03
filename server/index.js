@@ -77,6 +77,7 @@ async function handleSearch(ean, res) {
       offer => offer.shop?.signCode === "0772"
     ) || {};
 
+    //TODO: Fix when no offer is found
     if (!offer) {
       return res.status(404).json({ error: "No offer found for the local store" });
     }
