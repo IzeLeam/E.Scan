@@ -104,7 +104,7 @@ async function handleSearch(ean, res) {
     // Get the stock (data.stock)
     stock = offer.stock || "No stock information found";
     console.log("[DEBUG] Stock before processing:", stock);
-    if (stock.replace(/[^0-9.-]+/g, "") === "") {
+    if (typeof stock === "string") {
       stock = 0;
     }
     console.log("[DEBUG] Stock after processing:", stock);
