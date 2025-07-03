@@ -2,8 +2,9 @@
 
 import React, { useEffect, useRef } from "react";
 // BarcodeScanner.tsx
-// @ts-expect-error
+// @ts-expect-error: quagga n’a pas de types disponibles (pas de @types/quagga)
 import Quagga from 'quagga';
+
 
 
 type Props = {
