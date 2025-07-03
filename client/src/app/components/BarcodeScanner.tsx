@@ -1,7 +1,10 @@
 "use client";
 
 import React, { useEffect, useRef } from "react";
-import Quagga from "quagga";
+// BarcodeScanner.tsx
+// @ts-ignore
+import Quagga from 'quagga';
+
 
 type Props = {
   onDetected: (code: string) => void;
