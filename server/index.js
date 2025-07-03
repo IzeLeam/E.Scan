@@ -13,7 +13,6 @@ app.use(cors({
 
 app.use(express.json());
 
-// GET /
 app.get("/", (req, res) => {
   res.send("Welcome to the E.Leclerc Product Search API");
 });
@@ -83,11 +82,25 @@ async function handleSearch(ean, res) {
     }
 
     // Get the price (data.price)
-    const price = offer.basePrice?.price?.priceWithAllTaxes || "No price found";
+    price = offer.basePrice?.price?.priceWithAllTaxes || "No price found";
+    if (typeof price === "string") {
+      price = parseFloat(price.replace(/[^0-9.-]+/g, ""));
+    }
+    if (isNaN(price)) {
+      price = 0.00;
+    }
+    // Convert price to a string with two decimal places
+    price = (price / 100).toFixed(2);
+    if (isNaN(price)) {
+      price = 0.00;
+    }
     data.price = price;
 
     // Get the stock (data.stock)
-    const stock = offer.stock || "No stock information found";
+    stock = offer.stock || "No stock information found";
+    if (stock.replace(/[^0-9.-]+/g, "") === "") {
+      stock = 0;
+    }
     data.stock = stock;
 
     //Include rawData in response
