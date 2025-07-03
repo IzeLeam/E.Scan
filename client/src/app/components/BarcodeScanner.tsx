@@ -2,7 +2,7 @@
 
 import React, { useEffect, useRef } from "react";
 // BarcodeScanner.tsx
-// @ts-ignore
+// @ts-expect-error
 import Quagga from 'quagga';
 
 
