@@ -6,7 +6,7 @@ export default function BottomNavbar() {
   return (
     <nav className="fixed bottom-0 left-0 w-full bg-white shadow-xl z-50">
     <div className="flex justify-between items-center px-6 py-3.5 relative">
-        <Link href="#" className="">
+        <Link href="/scanner" className="">
             <Image
             src="/progress.png"
             alt="Progress Icon"
