@@ -69,7 +69,8 @@ async function handleSearch(ean, res) {
     // Get the images (data.images[])
     const images = rawData.items?.[0]?.variants?.[0]?.attributes
       ?.filter(attr => attr.type === "image")
-      ?.map(attr => attr.value.url) || [];
+      ?.map(attr => attr.value.url)
+      .filter(url => /^https:\/\/.media\.e\.leclerc/.test(url)) || [];
     data.images = images;
 
     // Get the offer of our local store (data.offer)
@@ -77,9 +78,8 @@ async function handleSearch(ean, res) {
       offer => offer.shop?.signCode === "0772"
     ) || {};
 
-    //TODO: Fix when no offer is found
     if (!offer) {
-      return res.status(404).json({ error: "No offer found for the local store" });
+      data.offer = false;
     }
 
     // Get the price (data.price)
@@ -109,7 +109,7 @@ async function handleSearch(ean, res) {
       stock = 0;
     }
     console.log("[DEBUG] Stock after processing:", stock);
-    data.stock = stock;
+    data.stock = (stock > 0) ? stock + 1 : stock;
 
     //Include rawData in response
     data.rawData = rawData;
