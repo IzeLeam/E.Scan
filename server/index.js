@@ -70,7 +70,7 @@ async function handleSearch(ean, res) {
     const images = rawData.items?.[0]?.variants?.[0]?.attributes
       ?.filter(attr => attr.type === "image")
       ?.map(attr => attr.value.url)
-      .filter(url => /^https:\/\/.media\.e\.leclerc/.test(url)) || [];
+      .filter(url => /^https:\/\/media\.e\.leclerc/.test(url)) || [];
     data.images = images;
 
     // Get the offer of our local store (data.offer)
