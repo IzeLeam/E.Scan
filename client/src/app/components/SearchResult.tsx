@@ -86,7 +86,7 @@ export default function SearchResult({ data }: Props) {
             ? (() => {
                 try {
                   return JSON.stringify(JSON.parse(data.rawData), null, 2);
-                } catch (e) {
+                } catch (_e) {
                   return data.rawData;
                 }
               })()
