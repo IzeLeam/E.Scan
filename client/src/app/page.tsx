@@ -1,14 +1,12 @@
-"use client"
-import SearchInput from './components/SearchInput';
-import { useSearchParams } from 'next/navigation';
+import { Suspense } from 'react';
+import SearchWithParams from './components/SearchWithParams';
 
 export default function Home() {
-  const searchParams = useSearchParams();
-  const ean = searchParams.get('ean') ?? "";
-
   return (
     <div>
-      <SearchInput initialEAN={ean} />
+      <Suspense fallback={<div>Chargement...</div>}>
+        <SearchWithParams />
+      </Suspense>
     </div>
   );
 }
