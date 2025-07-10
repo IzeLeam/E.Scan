@@ -86,12 +86,13 @@ export default function SearchResult({ data }: Props) {
             ? (() => {
                 try {
                   return JSON.stringify(JSON.parse(data.rawData), null, 2);
-                } catch (_e) {
+                } catch {
                   return data.rawData;
                 }
               })()
             : JSON.stringify(data.rawData, null, 2)}
         </pre>
+
       </details>
     </div>
   );
