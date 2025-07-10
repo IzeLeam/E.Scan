@@ -78,9 +78,7 @@ async function handleSearch(ean, res) {
       offer => offer.shop?.signCode === "0772"
     ) || {};
 
-    if (!offer) {
-      data.offer = false;
-    }
+    data.offer = !!offer;
 
     // Get the price (data.price)
     price = offer.basePrice?.price?.priceWithAllTaxes || "No price found";
