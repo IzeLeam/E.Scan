@@ -1,14 +1,19 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import SearchResult from "./SearchResult";
-export default function SearchInput() {
-  const [eanValue, setEanValue] = useState("");
+export default function SearchInput({
+  initialEAN = "",
+}: {
+  initialEAN?: string;
+}) {
+  const [eanValue, setEanValue] = useState(initialEAN);
   const [autoScroll, setAutoScroll] = useState(true);
   const [data, setData] = useState<null | {
     title: string;
     description: string;
     images: string[];
+    offer: boolean;
     price: number;
     stock: number;
     rawData: string;
@@ -17,26 +22,37 @@ export default function SearchInput() {
   const inputRef = useRef<HTMLInputElement>(null);
   const resultRef = useRef<HTMLDivElement>(null);
 
-  const handleChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  useEffect(() => {
+    if (/^\d{13}$/.test(initialEAN)) {
+      handleSearch(initialEAN);
+    }
+  }, [initialEAN]);
+
+  const handleSearch = async (ean: string) => {
+    try {
+      const res = await fetch(`https://api.escan.lucaprc.fr/search?ean=${ean}`);
+      const fetchedData = await res.json();
+      setData(fetchedData);
+      if (autoScroll) {
+        setTimeout(() => {
+          resultRef.current?.scrollIntoView({
+            behavior: "smooth",
+            block: "start",
+          });
+        }, 100);
+      }
+    } catch (error) {
+      console.error("Erreur lors de la récupération des données", error);
+      setData(null);
+    }
+  };
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const ean = e.target.value.replaceAll(" ", "");
     setEanValue(ean);
 
     if (/^\d{13}$/.test(ean)) {
-      try {
-        const res = await fetch(
-          `https://api.escan.lucaprc.fr/search?ean=${ean}`
-        );
-        const fetchedData = await res.json();
-        setData(fetchedData);
-        if (autoScroll) {
-          setTimeout(() => {
-            resultRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
-          }, 100);
-        }
-      } catch (error) {
-        console.error("Erreur lors de la récupération des données", error);
-        setData(null);
-      }
+      handleSearch(ean);
     } else {
       setData(null);
     }
@@ -52,7 +68,9 @@ export default function SearchInput() {
     <>
       <div className="p-4 max-w-md min-h-[calc(100vh-56px)] mx-auto flex flex-col items-center justify-center">
         <div className="absolute top-5 right-5 flex items-center space-x-1 text-sm text-white z-10">
-          <label htmlFor="scroll-toggle" className="font-bold opacity-25">Auto-Scroll</label>
+          <label htmlFor="scroll-toggle" className="font-bold opacity-25">
+            Auto-Scroll
+          </label>
           <input
             id="scroll-toggle"
             type="checkbox"
@@ -74,6 +92,16 @@ export default function SearchInput() {
           </label>
         </div>
 
+        {!data ? (
+          <div className="w-full text-center p-4 mb-4">
+            <p className="text-gray-700">
+              Entrez un code EAN à 13 chiffres pour rechercher un produit.
+            </p>
+            <p className="text-gray-500 text-sm mt-2">
+              Exemple : 1234567890123
+            </p>
+          </div>
+        ) : null}
         <div className="relative w-full mb-4">
           <input
             ref={inputRef}
@@ -95,11 +123,39 @@ export default function SearchInput() {
             </button>
           )}
         </div>
-
+        {data ? (
+          <div
+            className="w-full flex justify-center text-center cursor-pointer mb-4"
+            onClick={() => {
+              if (typeof navigator !== "undefined" && navigator.clipboard) {
+                navigator.clipboard.writeText(
+                  `https://escan.lucaprc.fr/?ean=${eanValue}`
+                );
+              } else {
+                alert("La fonction de copie n'est pas disponible sur ce navigateur.");
+              }
+            }}>
+            <p className="text-gray-300 mr-3">Copier le lien</p>
+            <svg
+              className="w-6 h-6 text-gray-300"
+              aria-hidden="true"
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              fill="none"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke="currentColor"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M9 8v3a1 1 0 0 1-1 1H5m11 4h2a1 1 0 0 0 1-1V5a1 1 0 0 0-1-1h-7a1 1 0 0 0-1 1v1m4 3v10a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1v-7.13a1 1 0 0 1 .24-.65L7.7 8.35A1 1 0 0 1 8.46 8H13a1 1 0 0 1 1 1Z"
+              />
+            </svg>
+          </div>
+        ) : null}
       </div>
-      <div ref={resultRef}>
-        {data ? <SearchResult data={data} /> : <></>}
-      </div>
+      <div ref={resultRef}>{data ? <SearchResult data={data} /> : <></>}</div>
     </>
   );
 }

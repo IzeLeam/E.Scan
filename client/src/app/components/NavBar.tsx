@@ -1,4 +1,3 @@
-// components/BottomNavbar.tsx
 import Image from "next/image";
 import Link from "next/link";
 
@@ -38,7 +37,6 @@ export default function BottomNavbar() {
           </Link>
         </div>
 
-        {/* Right Links */}
         <Link href="/historic" className="">
             <Image
                 src="/historic.png"
