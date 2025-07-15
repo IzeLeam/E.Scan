@@ -91,17 +91,6 @@ export default function SearchInput({
             />
           </label>
         </div>
-
-        {!data ? (
-          <div className="w-full text-center p-4 mb-4">
-            <p className="text-gray-700">
-              Entrez un code EAN à 13 chiffres pour rechercher un produit.
-            </p>
-            <p className="text-gray-500 text-sm mt-2">
-              Exemple : 1234567890123
-            </p>
-          </div>
-        ) : null}
         <div className="relative w-full mb-4">
           <input
             ref={inputRef}
