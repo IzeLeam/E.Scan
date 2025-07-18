@@ -45,7 +45,7 @@ export default function BarcodeScanner({ active, setActive, onDetected }: Props)
     const onDetectedHandler = (result: { codeResult: { code: string } }) => {
       const code = result.codeResult.code;
       onDetected(code);
-      setActive(false); // Désactive après détection
+      setActive(false);
     };
 
     Quagga.onDetected(onDetectedHandler);
@@ -62,12 +62,15 @@ export default function BarcodeScanner({ active, setActive, onDetected }: Props)
       {active ? (
         <div ref={scannerRef} className="w-full h-64 bg-black" />
       ) : (
-        <button
-          onClick={() => setActive(true)}
-          className="px-4 py-2 bg-blue-600 text-white rounded"
-        >
-          Activer le scanner
-        </button>
+        <div className="w-full h-64 bg-black flex flex-column items-center justify-center">
+          <button
+            onClick={() => setActive(true)}
+            className="ml-4 px-4 py-2 bg-black text-white rounded border border-white"
+          >
+            Activer le scanner
+          </button>
+          <span className="text-red mt-3 ml-2">En cours de développement</span>
+        </div>
       )}
     </div>
   );
