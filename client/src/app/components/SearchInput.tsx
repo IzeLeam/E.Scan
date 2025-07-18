@@ -1,5 +1,6 @@
 "use client";
 
+import BarcodeScanner from "./BarcodeScanner";
 import { useRef, useState, useEffect } from "react";
 import SearchResult from "./SearchResult";
 export default function SearchInput({
@@ -8,6 +9,7 @@ export default function SearchInput({
   initialEAN?: string;
 }) {
   const [eanValue, setEanValue] = useState(initialEAN);
+  const [scannerActive, setScannerActive] = useState(false);
   const [autoScroll, setAutoScroll] = useState(true);
   const [data, setData] = useState<null | {
     title: string;
@@ -58,6 +60,12 @@ export default function SearchInput({
     }
   };
 
+  const handleDetected = (code: string) => {
+    setEanValue(code);
+    handleSearch(code);
+    setScannerActive(false);
+  }
+
   const handleClear = () => {
     setEanValue("");
     setData(null);
@@ -104,19 +112,24 @@ export default function SearchInput({
           />
           {eanValue && (
             <button
-              onClick={handleClear}
-              className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-white"
-              aria-label="Effacer"
+            onClick={handleClear}
+            className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-white"
+            aria-label="Effacer"
             >
               &#10005;
             </button>
           )}
         </div>
+        <BarcodeScanner
+          active={scannerActive}
+          setActive={setScannerActive}
+          onDetected={handleDetected}
+        />
         {data ? (
           <div
-            className="w-full flex justify-center text-center cursor-pointer mb-4"
-            onClick={() => {
-              if (typeof navigator !== "undefined" && navigator.clipboard) {
+          className="w-full flex justify-center text-center cursor-pointer mb-4"
+          onClick={() => {
+            if (typeof navigator !== "undefined" && navigator.clipboard) {
                 navigator.clipboard.writeText(
                   `https://escan.lucaprc.fr/?ean=${eanValue}`
                 );
