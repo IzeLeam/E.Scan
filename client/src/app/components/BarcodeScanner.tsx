@@ -62,7 +62,7 @@ export default function BarcodeScanner({ active, setActive, onDetected }: Props)
       {active ? (
         <div ref={scannerRef} className="w-full h-64 bg-black" />
       ) : (
-        <div className="w-full h-64 bg-black flex flex-column items-center justify-center">
+        <div className="w-full h-64 bg-black flex flex-col items-center justify-center">
           <button
             onClick={() => setActive(true)}
             className="ml-4 px-4 py-2 bg-black text-white rounded border border-white"
