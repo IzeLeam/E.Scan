@@ -4,7 +4,11 @@ import { useEffect, useRef, useState } from 'react';
 // @ts-expect-error: Quagga n’a pas de types
 import Quagga from 'quagga';
 
-export default function BarcodeScanner() {
+export default function BarcodeScanner({
+  onDetected,
+}: {
+  onDetected?: (code: string) => void;
+}) {
   const scannerRef = useRef<HTMLDivElement>(null);
   const [isRunning, setIsRunning] = useState(false);
 
@@ -20,13 +24,13 @@ export default function BarcodeScanner() {
         type: 'LiveStream',
         target: scannerRef.current,
         constraints: {
-          width: 640,
-          height: 480,
+          width: 256,
+          height: 128,
           facingMode: 'environment',
         },
       },
       decoder: {
-        readers: ['ean_reader', 'code_128_reader'],
+        readers: ['ean_reader'],
       },
       locate: true,
     }, (err: Error | null) => {
@@ -48,8 +52,8 @@ export default function BarcodeScanner() {
 
     Quagga.onDetected((result: QuaggaDetectedResult) => {
       const code: string = result.codeResult.code;
-      alert(`Code détecté : ${code}`);
-      Quagga.stop();
+      stopScanner();
+      if (onDetected) onDetected(code);
     });
   };
 
@@ -59,10 +63,9 @@ export default function BarcodeScanner() {
   };
 
   useEffect(() => {
-    // ⚠️ Démarre seulement si l'élément est visible
     const timeout = setTimeout(() => {
       if (!isRunning) startScanner();
-    }, 500); // Laisse le temps au DOM de rendre
+    }, 500);
 
     return () => {
       clearTimeout(timeout);
@@ -71,17 +74,19 @@ export default function BarcodeScanner() {
   }, []);
 
   return (
-    <div className="flex flex-col items-center">
+    <div className="w-full flex flex-col items-center">
       <div
         ref={scannerRef}
-        className="w-[640px] h-[480px] bg-black"
-      />
-      <button
-        onClick={isRunning ? stopScanner : startScanner}
-        className="mt-4 px-4 py-2 bg-blue-600 text-white rounded"
+        className="bg-black w-full max-w-md h-32 flex items-center justify-center mb-4 relative"
       >
-        {isRunning ? 'Stop Scanner' : 'Start Scanner'}
-      </button>
+        <button
+          onClick={isRunning ? stopScanner : startScanner}
+          className="text-white border border-white rounded px-4 py-2 absolute cursor-pointer"
+          style={{ zIndex: 2 }}
+        >
+          {isRunning ? 'Stop Scanner' : 'Start Scanner'}
+        </button>
+      </div>
     </div>
   );
 }

@@ -65,6 +65,11 @@ export default function SearchInput({
     inputRef.current?.focus();
   };
 
+  const handleDetected = (code: string) => {
+    setEanValue(code);
+    handleSearch(code);
+  };
+
   return (
     <>
       <div className="p-4 max-w-md min-h-[calc(100vh-56px)] mx-auto flex flex-col items-center justify-center">
@@ -113,8 +118,7 @@ export default function SearchInput({
             </button>
           )}
         </div>
-        <BarcodeScanner
-        />
+        <BarcodeScanner onDetected={handleDetected}/>
         {data ? (
           <div
           className="w-full flex justify-center text-center cursor-pointer mb-4"
