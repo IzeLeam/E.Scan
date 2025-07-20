@@ -38,13 +38,18 @@ export default function BarcodeScanner() {
       setIsRunning(true);
     });
 
-    Quagga.onDetected((result: any) => {
-      const code = result?.codeResult?.code;
-      if (code) {
-        console.log('Scanned code:', code);
-        Quagga.stop();
-        setIsRunning(false);
-      }
+    interface QuaggaCodeResult {
+      code: string;
+    }
+
+    interface QuaggaDetectedResult {
+      codeResult: QuaggaCodeResult;
+    }
+
+    Quagga.onDetected((result: QuaggaDetectedResult) => {
+      const code: string = result.codeResult.code;
+      alert(`Code détecté : ${code}`);
+      Quagga.stop();
     });
   };
 
