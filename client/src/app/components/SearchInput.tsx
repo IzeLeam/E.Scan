@@ -9,7 +9,6 @@ export default function SearchInput({
   initialEAN?: string;
 }) {
   const [eanValue, setEanValue] = useState(initialEAN);
-  const [scannerActive, setScannerActive] = useState(false);
   const [autoScroll, setAutoScroll] = useState(true);
   const [data, setData] = useState<null | {
     title: string;
@@ -63,7 +62,6 @@ export default function SearchInput({
   const handleDetected = (code: string) => {
     setEanValue(code);
     handleSearch(code);
-    setScannerActive(false);
   }
 
   const handleClear = () => {
@@ -121,8 +119,6 @@ export default function SearchInput({
           )}
         </div>
         <BarcodeScanner
-          active={scannerActive}
-          setActive={setScannerActive}
           onDetected={handleDetected}
         />
         {data ? (
