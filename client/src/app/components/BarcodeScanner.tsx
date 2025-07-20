@@ -45,7 +45,6 @@ export default function BarcodeScanner({
       }
     );
 
-    alert('Scanner is running, please wait for a barcode to be detected.');
     Quagga.onDetected((result: { codeResult: { code: string } }) => {
       const code: string = result.codeResult.code;
       stopScanner();
@@ -62,16 +61,29 @@ export default function BarcodeScanner({
     <div className="w-full flex flex-col items-center">
       <div
         ref={scannerRef}
-        className="bg-black w-full max-w-md h-32 flex items-center justify-center mb-4 relative"
+        id="scanner-container"
+        className="bg-black w-full max-w-md h-48 relative overflow-hidden"
       >
         <button
           onClick={isRunning ? stopScanner : startScanner}
-          className="text-white border border-white rounded px-4 py-2 absolute cursor-pointer"
-          style={{ zIndex: 2 }}
+          className="text-white border border-white rounded px-4 py-2 absolute bottom-2 left-1/2 transform -translate-x-1/2 z-10"
         >
           {isRunning ? 'Stop Scanner' : 'Start Scanner'}
         </button>
       </div>
+
+      {/* Inject global styles for video/canvas */}
+      <style jsx global>{`
+        #scanner-container video,
+        #scanner-container canvas {
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 100% !important;
+          height: 100% !important;
+          object-fit: cover;
+        }
+      `}</style>
     </div>
   );
 }
