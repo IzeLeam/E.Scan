@@ -5,7 +5,7 @@ export default function BottomNavbar() {
   return (
     <nav className="fixed bottom-0 left-0 w-full bg-white shadow-xl z-50">
     <div className="flex justify-between items-center px-6 py-3.5 relative">
-        <Link href="/scanner" className="">
+        <Link href="#" className="">
             <Image
             src="/progress.png"
             alt="Progress Icon"
@@ -14,7 +14,7 @@ export default function BottomNavbar() {
             className="w-7 h-7"
             />
         </Link>
-        <Link href="/list" className="">
+        <Link href="#" className="">
             <Image
             src="/list.png"
             alt="List Icon"
@@ -37,7 +37,7 @@ export default function BottomNavbar() {
           </Link>
         </div>
 
-        <Link href="/historic" className="">
+        <Link href="#" className="">
             <Image
                 src="/historic.png"
                 alt="Settings Icon"
@@ -46,7 +46,7 @@ export default function BottomNavbar() {
                 className="w-7 h-7"
             />
         </Link>
-        <Link href="/settings" className="">
+        <Link href="#" className="">
             <Image
                 src="/account.png"
                 alt="Account Icon"

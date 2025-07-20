@@ -103,7 +103,8 @@ export default function SearchInput({
             type="text"
             pattern="\d*"
             inputMode="numeric"
-            placeholder="Entrez un code EAN"
+            placeholder="Enter EAN code"
+            autoComplete="off"
             value={eanValue}
             onChange={handleChange}
             className="w-full px-4 py-2 rounded border pr-10 text-white"
@@ -119,37 +120,6 @@ export default function SearchInput({
           )}
         </div>
         <BarcodeScanner onDetected={handleDetected}/>
-        {data ? (
-          <div
-          className="w-full flex justify-center text-center cursor-pointer mb-4"
-          onClick={() => {
-            if (typeof navigator !== "undefined" && navigator.clipboard) {
-                navigator.clipboard.writeText(
-                  `https://escan.lucaprc.fr/?ean=${eanValue}`
-                );
-              } else {
-                alert("La fonction de copie n'est pas disponible sur ce navigateur.");
-              }
-            }}>
-            <p className="text-gray-300 mr-3">Copier le lien</p>
-            <svg
-              className="w-6 h-6 text-gray-300"
-              aria-hidden="true"
-              xmlns="http://www.w3.org/2000/svg"
-              width="24"
-              height="24"
-              fill="none"
-              viewBox="0 0 24 24"
-            >
-              <path
-                stroke="currentColor"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M9 8v3a1 1 0 0 1-1 1H5m11 4h2a1 1 0 0 0 1-1V5a1 1 0 0 0-1-1h-7a1 1 0 0 0-1 1v1m4 3v10a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1v-7.13a1 1 0 0 1 .24-.65L7.7 8.35A1 1 0 0 1 8.46 8H13a1 1 0 0 1 1 1Z"
-              />
-            </svg>
-          </div>
-        ) : null}
       </div>
       <div ref={resultRef}>{data ? <SearchResult data={data} /> : <></>}</div>
     </>

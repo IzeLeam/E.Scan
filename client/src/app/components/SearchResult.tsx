@@ -46,7 +46,7 @@ export default function SearchResult({ data }: Props) {
       </div>
 
       <hr className="my-2 w-[calc(100%-3rem)] mx-auto" />
-        {data.offer ? (
+        {data.offer || data.stock > 0 ? (
           <div className="flex items-center justify-around px-5">
             <div>
               <h3 className="text-lg inline-block mr-3 text-gray-900 font-semibold">Prix:</h3>

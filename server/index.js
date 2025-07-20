@@ -82,31 +82,24 @@ async function handleSearch(ean, res) {
 
     // Get the price (data.price)
     price = offer.basePrice?.price?.priceWithAllTaxes || "No price found";
-    console.log("[DEBUG] Price before processing:", price);
     if (typeof price === "string") {
       price = parseFloat(price.replace(/[^0-9.-]+/g, ""));
     }
-    console.log("[DEBUG] Price after processing:", price);
     if (isNaN(price)) {
       price = 0.00;
     }
-    console.log("[DEBUG] Price after NaN check:", price);
     // Convert price to a string with two decimal places
     price = (price / 100).toFixed(2);
-    console.log("[DEBUG] Final price:", price);
     if (isNaN(price)) {
       price = 0.00;
     }
-    console.log("[DEBUG] Final price after NaN check:", price);
     data.price = price;
 
     // Get the stock (data.stock)
     stock = offer.stock || "No stock information found";
-    console.log("[DEBUG] Stock before processing:", stock);
     if (typeof stock === "string") {
       stock = 0;
     }
-    console.log("[DEBUG] Stock after processing:", stock);
     data.stock = (stock > 0) ? stock + 1 : stock;
 
     //Include rawData in response

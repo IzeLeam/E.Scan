@@ -62,17 +62,17 @@ export default function BarcodeScanner({
       <div
         ref={scannerRef}
         id="scanner-container"
-        className="bg-black w-full max-w-md h-48 relative overflow-hidden"
+        className="w-full rounded max-w-md h-48 relative overflow-hidden"
+        style={{ background: 'rgba(0, 0, 0, 0.5)'}}
       >
         <button
           onClick={isRunning ? stopScanner : startScanner}
-          className="text-white border border-white rounded px-4 py-2 absolute bottom-2 left-1/2 transform -translate-x-1/2 z-10"
+          className={`text-(--background) bg-(--foreground) border border-white rounded px-4 py-2 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-10${isRunning ? ' hidden' : ''}`}
         >
-          {isRunning ? 'Stop Scanner' : 'Start Scanner'}
+          Start Scanner
         </button>
       </div>
 
-      {/* Inject global styles for video/canvas */}
       <style jsx global>{`
         #scanner-container video,
         #scanner-container canvas {
