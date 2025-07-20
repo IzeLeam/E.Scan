@@ -59,11 +59,6 @@ export default function SearchInput({
     }
   };
 
-  const handleDetected = (code: string) => {
-    setEanValue(code);
-    handleSearch(code);
-  }
-
   const handleClear = () => {
     setEanValue("");
     setData(null);
