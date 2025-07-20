@@ -25,8 +25,8 @@ export default function BarcodeScanner({
           type: 'LiveStream',
           target: scannerRef.current,
           constraints: {
-            width: 256,
-            height: 128,
+            width: 480,
+            height: 320,
             facingMode: 'environment',
           },
         },
