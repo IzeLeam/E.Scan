@@ -119,7 +119,6 @@ export default function SearchInput({
           )}
         </div>
         <BarcodeScanner
-          onDetected={handleDetected}
         />
         {data ? (
           <div

@@ -1,87 +1,82 @@
-"use client";
+'use client';
 
-import React, { useEffect, useRef } from "react";
-// BarcodeScanner.tsx
-// @ts-expect-error: quagga n’a pas de types disponibles (pas de @types/quagga)
+import { useEffect, useRef, useState } from 'react';
+// @ts-expect-error: Quagga n’a pas de types
 import Quagga from 'quagga';
 
-
-
-type Props = {
-  onDetected: (code: string) => void;
-};
-
-export default function BarcodeScanner({ onDetected }: Props) {
+export default function BarcodeScanner() {
   const scannerRef = useRef<HTMLDivElement>(null);
+  const [isRunning, setIsRunning] = useState(false);
 
-  useEffect(() => {
-    if (!scannerRef.current) return;
-
-    interface QuaggaInputStreamConstraints {
-        facingMode: string;
+  const startScanner = () => {
+    if (!scannerRef.current) {
+      console.warn('Scanner ref not ready');
+      return;
     }
 
-    interface QuaggaInputStreamConfig {
-        type: string;
-        target: HTMLElement;
-        constraints: QuaggaInputStreamConstraints;
-    }
-
-    interface QuaggaDecoderConfig {
-        readers: string[];
-    }
-
-    interface QuaggaConfig {
-        inputStream: QuaggaInputStreamConfig;
-        decoder: QuaggaDecoderConfig;
-    }
-
-    Quagga.init(
-        {
-            inputStream: {
-                type: "LiveStream",
-                target: scannerRef.current as HTMLElement,
-                constraints: {
-                    facingMode: "environment", // caméra arrière
-                },
-            },
-            decoder: {
-                readers: ["ean_reader"], // EAN-13
-            },
-        } as QuaggaConfig,
-        (err: Error | null) => {
-            if (err) {
-                console.error("Quagga init error:", err);
-                return;
-            }
-            Quagga.start();
-        }
-    );
-
-    interface QuaggaCodeResult {
-      code: string;
-    }
-
-    interface QuaggaDetectedResult {
-      codeResult: QuaggaCodeResult;
-    }
-
-    Quagga.onDetected((result: QuaggaDetectedResult) => {
-      const code: string = result.codeResult.code;
-      onDetected(code);
-      Quagga.stop();
+    Quagga.init({
+      inputStream: {
+        name: 'Live',
+        type: 'LiveStream',
+        target: scannerRef.current,
+        constraints: {
+          width: 640,
+          height: 480,
+          facingMode: 'environment',
+        },
+      },
+      decoder: {
+        readers: ['ean_reader', 'code_128_reader'],
+      },
+      locate: true,
+    }, (err: Error | null) => {
+      if (err) {
+        console.error('Quagga init error:', err);
+        return;
+      }
+      Quagga.start();
+      setIsRunning(true);
     });
 
+    Quagga.onDetected((result: any) => {
+      const code = result?.codeResult?.code;
+      if (code) {
+        console.log('Scanned code:', code);
+        Quagga.stop();
+        setIsRunning(false);
+      }
+    });
+  };
+
+  const stopScanner = () => {
+    Quagga.stop();
+    setIsRunning(false);
+  };
+
+  useEffect(() => {
+    // ⚠️ Démarre seulement si l'élément est visible
+    const timeout = setTimeout(() => {
+      if (!isRunning) startScanner();
+    }, 500); // Laisse le temps au DOM de rendre
+
     return () => {
+      clearTimeout(timeout);
       Quagga.stop();
-      Quagga.offDetected(() => {});
     };
   }, []);
 
   return (
-    <div>
-      <div ref={scannerRef} className="w-full h-64 bg-black" />
-      <p className="text-center mt-2 text-sm text-gray-500">Scanner un code EAN-13</p>
+    <div className="flex flex-col items-center">
+      <div
+        ref={scannerRef}
+        className="w-[640px] h-[480px] bg-black"
+      />
+      <button
+        onClick={isRunning ? stopScanner : startScanner}
+        className="mt-4 px-4 py-2 bg-blue-600 text-white rounded"
+      >
+        {isRunning ? 'Stop Scanner' : 'Start Scanner'}
+      </button>
     </div>
   );
 }
