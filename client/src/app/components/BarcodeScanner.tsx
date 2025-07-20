@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 // @ts-expect-error: Quagga n’a pas de types
 import Quagga from 'quagga';
 
@@ -18,40 +18,36 @@ export default function BarcodeScanner({
       return;
     }
 
-    Quagga.init({
-      inputStream: {
-        name: 'Live',
-        type: 'LiveStream',
-        target: scannerRef.current,
-        constraints: {
-          width: 256,
-          height: 128,
-          facingMode: 'environment',
+    Quagga.init(
+      {
+        inputStream: {
+          name: 'Live',
+          type: 'LiveStream',
+          target: scannerRef.current,
+          constraints: {
+            width: 256,
+            height: 128,
+            facingMode: 'environment',
+          },
         },
+        decoder: {
+          readers: ['ean_reader'],
+        },
+        locate: true,
       },
-      decoder: {
-        readers: ['ean_reader'],
-      },
-      locate: true,
-    }, (err: Error | null) => {
-      if (err) {
-        console.error('Quagga init error:', err);
-        return;
+      (err: Error | null) => {
+        if (err) {
+          console.error('Quagga init error:', err);
+          return;
+        }
+        Quagga.start();
+        setIsRunning(true);
       }
-      Quagga.start();
-      setIsRunning(true);
-    });
+    );
 
-    interface QuaggaCodeResult {
-      code: string;
-    }
-
-    interface QuaggaDetectedResult {
-      codeResult: QuaggaCodeResult;
-    }
-
-    Quagga.onDetected((result: QuaggaDetectedResult) => {
+    Quagga.onDetected((result: { codeResult: { code: string } }) => {
       const code: string = result.codeResult.code;
+      alert(`Code détecté : ${code}`);
       stopScanner();
       if (onDetected) onDetected(code);
     });
@@ -61,17 +57,6 @@ export default function BarcodeScanner({
     Quagga.stop();
     setIsRunning(false);
   };
-
-  useEffect(() => {
-    const timeout = setTimeout(() => {
-      if (!isRunning) startScanner();
-    }, 500);
-
-    return () => {
-      clearTimeout(timeout);
-      Quagga.stop();
-    };
-  }, []);
 
   return (
     <div className="w-full flex flex-col items-center">
