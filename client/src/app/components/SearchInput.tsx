@@ -66,7 +66,6 @@ export default function SearchInput({
   };
 
   const handleDetected = (code: string) => {
-    alert(`Code détecté : ${code}`);
     setEanValue(code);
     handleSearch(code);
   };

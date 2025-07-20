@@ -18,7 +18,6 @@ export default function BarcodeScanner({
       return;
     }
 
-    alert('Scanner starting, please wait...');
     Quagga.init(
       {
         inputStream: {
@@ -41,7 +40,6 @@ export default function BarcodeScanner({
           console.error('Quagga init error:', err);
           return;
         }
-        alert('Scanner initialized successfully.');
         Quagga.start();
         setIsRunning(true);
       }
@@ -50,14 +48,12 @@ export default function BarcodeScanner({
     alert('Scanner is running, please wait for a barcode to be detected.');
     Quagga.onDetected((result: { codeResult: { code: string } }) => {
       const code: string = result.codeResult.code;
-      alert(`Code détecté : ${code}`);
       stopScanner();
       if (onDetected) onDetected(code);
     });
   };
 
   const stopScanner = () => {
-    alert('Scanner stopped.');
     Quagga.stop();
     setIsRunning(false);
   };
