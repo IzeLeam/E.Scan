@@ -4,10 +4,27 @@ import React, { useState } from "react";
 import BarcodeScanner from "../components/BarcodeScanner";
 
 export default function ScannerPage() {
-    const [scannedCodes, setScannedCodes] = useState<string[]>([]);
+    interface ScannedCode {
+        code:string;
+        count:number;
+    }
+
+    const [scannedCodes, setScannedCodes] = useState<ScannedCode[]>([]);
 
     function handleCodeDetected(code: string) {
-        setScannedCodes(scannedCodes => [...scannedCodes, code]);
+        setScannedCodes(prevCodes => {
+            let updatedCodes;
+            const existingCode = prevCodes.find(c => c.code === code);
+            if (existingCode) {
+                updatedCodes = prevCodes.map(c =>
+                    c.code === code ? { ...c, count: c.count + 1 } : c
+                );
+            } else {
+                updatedCodes = [...prevCodes, { code, count: 1 }];
+            }
+            // Sort by count descending
+            return [...updatedCodes].sort((a, b) => b.count - a.count);
+        });
     }
 
     return (
@@ -20,8 +37,10 @@ export default function ScannerPage() {
             <div className="px-5 py-4">
                 <h3 className="text-lg font-semibold">Scanned Codes:</h3>
                 <ul className="list-disc pl-5">
-                    {scannedCodes.map((code, index) => (
-                        <li key={index} className="text-gray-800">{code}</li>
+                    {scannedCodes.map((item, index) => (
+                        <li key={index} className="text-gray-800">
+                            {item.code} - Count: {item.count}
+                        </li>
                     ))}
                 </ul>
             </div>
