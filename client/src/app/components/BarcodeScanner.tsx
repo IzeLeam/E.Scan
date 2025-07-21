@@ -90,6 +90,7 @@ export default function BarcodeScanner({ onDetected }: { onDetected?: (code: str
     Quagga.onDetected((result: { codeResult: { code: string } }) => {
       const code: string = result.codeResult.code;
       addScannedCode(code);
+      alert(`Code detected: ${code}`);
       const mostProbableCode = getMostProbableCode();
       if (mostProbableCode) {
         stopScanner();

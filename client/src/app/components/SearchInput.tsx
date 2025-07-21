@@ -3,8 +3,6 @@
 import BarcodeScanner from "./BarcodeScanner";
 import { useRef, useState, useEffect } from "react";
 import SearchResult from "./SearchResult";
-import { motion } from "framer-motion";
-
 export default function SearchInput({
   initialEAN = "",
 }: {
@@ -100,7 +98,7 @@ export default function SearchInput({
           </label>
         </div>
         <div className="relative w-full mb-4">
-          <motion.input
+          <input
             ref={inputRef}
             type="text"
             pattern="\d*"
@@ -109,24 +107,16 @@ export default function SearchInput({
             autoComplete="off"
             value={eanValue}
             onChange={handleChange}
-            className="w-full px-4 py-2 rounded border pr-10 text-white bg-transparent"
-            initial={{ scale: 0.95, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            transition={{ duration: 0.3 }}
+            className="w-full px-4 py-2 rounded border pr-10 text-white"
           />
-
           {eanValue && (
-            <motion.button
-              onClick={handleClear}
-              className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-white"
-              aria-label="Effacer"
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.8 }}
-              transition={{ duration: 0.2 }}
+            <button
+            onClick={handleClear}
+            className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-white"
+            aria-label="Effacer"
             >
               &#10005;
-            </motion.button>
+            </button>
           )}
         </div>
         <BarcodeScanner onDetected={handleDetected}/>
