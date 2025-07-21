@@ -3,13 +3,14 @@ import Link from "next/link";
 
 const NAV_ITEMS = [
   { href: "/list", icon: "/list.png", alt: "List Icon" },
+  { href: "#", icon: "/historic.png", alt: "dev" },
   { href: "/historic", icon: "/historic.png", alt: "Historic Icon" },
 ];
 
 export default function BottomNavbar() {
   return (
     <nav className="fixed bottom-0 left-0 w-full bg-white shadow-xl z-50">
-      <div className="flex justify-between mx-7 items-center px-6 py-3.5 relative">
+      <div className="flex justify-evenly items-center py-3.5 relative">
         {NAV_ITEMS.map((item, index) => (
           <Link key={index} href={item.href}>
             <Image

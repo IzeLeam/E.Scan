@@ -4,5 +4,5 @@ export default function History() {
       <h1 className="text-2xl font-bold mb-4">Historic</h1>
       <p className="text-gray-600">Consult your previous scans</p>
     </main>
- )
+  )
 };

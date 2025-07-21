@@ -95,7 +95,7 @@ export default function SearchInput({ initialEAN = "" }: { initialEAN?: string }
           <label
             htmlFor="scroll-toggle"
             className={`w-10 h-5 flex items-center border-1 rounded-full p-1 transition ${
-              autoScroll ? "bg-[--foreground]" : "bg-[--background]"
+              autoScroll ? "bg-(--foreground)" : "bg-(--background)"
             }`}
           >
             <motion.div
