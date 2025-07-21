@@ -16,11 +16,20 @@ export default function BarcodeScanner({ onDetected }: { onDetected?: (code: str
 
   const addScannedCode = (code: string) => {
     setScannedCodes((prev) => {
+      let updated: { code: string; frequency: number }[];
+
       const existing = prev.find((c) => c.code === code);
       if (existing) {
-        return prev.map((c) => (c.code === code ? { ...c, frequency: c.frequency + 1 } : c));
+        updated = prev.map((c) =>
+          c.code === code ? { ...c, frequency: c.frequency + 1 } : c
+        );
+      } else {
+        updated = [...prev, { code, frequency: 1 }];
       }
-      return [...prev, { code, frequency: 1 }];
+
+      // Tri par fréquence décroissante
+      updated.sort((a, b) => b.frequency - a.frequency);
+      return updated;
     });
   };
 
