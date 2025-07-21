@@ -2,7 +2,6 @@
 
 import React, { useState } from "react";
 import BarcodeScanner from "../components/BarcodeScanner";
-import ProgressBar from "../components/ProgressBar";
 
 export default function ScannerPage() {
     interface ScannedCode {
@@ -31,9 +30,19 @@ export default function ScannerPage() {
         return scannedCodes.reduce((total, code) => total + code.count, 0);
     }
 
-    function getHighestCountedCode(): string | null {
-        if (scannedCodes.length === 0) return null;
-        return scannedCodes[0].code;
+    function isValidEAN13(code: string): boolean {
+        if (!/^\d{13}$/.test(code)) return false;
+
+        const digits = code.split('').map(Number);
+        const checksum = digits[12];
+
+        const sum =
+            digits
+            .slice(0, 12)
+            .reduce((acc, digit, idx) => acc + digit * (idx % 2 === 0 ? 1 : 3), 0);
+
+        const expected = (10 - (sum % 10)) % 10;
+        return checksum === expected;
     }
 
     return (
@@ -43,13 +52,15 @@ export default function ScannerPage() {
 
             <BarcodeScanner onDetected={handleCodeDetected} />
 
-            <ProgressBar progress={getTotalCount()} />
             <div className="px-5 py-4">
                 <h3 className="text-lg font-semibold">Scanned Codes:</h3>
                 <ul className="list-disc pl-5">
                     {scannedCodes.map((item, index) => (
-                        <li key={index} className="text-gray-800">
-                            {item.code} - Count: {item.count}
+                        <li
+                            key={index}
+                            className={isValidEAN13(item.code) ? "text-green-600" : "text-red-600"}
+                        >
+                            {item.code} - {item.count}
                         </li>
                     ))}
                 </ul>

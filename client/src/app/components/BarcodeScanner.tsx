@@ -4,6 +4,9 @@ import { useRef, useState } from 'react';
 // @ts-expect-error: Quagga n’a pas de types
 import Quagga from 'quagga';
 
+import ProgressBar from './ProgressBar';
+import { get } from 'http';
+
 export default function BarcodeScanner({
   onDetected,
 }: {
@@ -11,6 +14,36 @@ export default function BarcodeScanner({
 }) {
   const scannerRef = useRef<HTMLDivElement>(null);
   const [isRunning, setIsRunning] = useState(false);
+
+  interface ScannedCode {
+    code: string;
+    frequency: number;
+  }
+
+  const scannedCodes: ScannedCode[] = [];
+
+  function addScannedCode(code: string) {
+    const existingCode = scannedCodes.find((c) => c.code === code);
+    if (existingCode) {
+      existingCode.frequency += 1;
+    } else {
+      scannedCodes.push({ code, frequency: 1 });
+    }
+    scannedCodes.sort((a, b) => b.frequency - a.frequency);
+  }
+
+  function getMostFrequentCode(): string | null {
+    if (scannedCodes.length === 0) return null;
+    return scannedCodes[0].code;
+  }
+
+  function getTotalScannedCount(): number {
+    return scannedCodes.reduce((total, code) => total + code.frequency, 0);
+  }
+
+  function getTopCodes(limit: number): ScannedCode[] {
+    return scannedCodes.slice(0, limit);
+  }
 
   const startScanner = () => {
     if (!scannerRef.current) {
@@ -47,8 +80,12 @@ export default function BarcodeScanner({
 
     Quagga.onDetected((result: { codeResult: { code: string } }) => {
       const code: string = result.codeResult.code;
-      //stopScanner();
-      if (onDetected) onDetected(code);
+      if (getTotalScannedCount() === 100) {
+        stopScanner();
+        const mostFrequentCode = getMostFrequentCode();
+        if (onDetected && mostFrequentCode) onDetected(mostFrequentCode);
+      }
+      addScannedCode(code);
     });
   };
 
@@ -72,6 +109,8 @@ export default function BarcodeScanner({
           Start Scanner
         </button>
       </div>
+      
+      <ProgressBar progress={getTotalScannedCount()} />
 
       <style jsx global>{`
         #scanner-container video,
