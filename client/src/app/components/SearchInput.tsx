@@ -74,19 +74,8 @@ export default function SearchInput({
 
   return (
     <>
-      <motion.div
-        className="p-4 max-w-md min-h-[calc(100vh-56px)] mx-auto flex flex-col items-center justify-center"
-        initial={{ opacity: 0, y: 30 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.4 }}
-      >
-        {/* Toggle Switch */}
-        <motion.div
-          className="absolute top-5 right-5 flex items-center space-x-1 text-sm text-white z-10"
-          initial={{ opacity: 0, x: 30 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ delay: 0.2, duration: 0.3 }}
-        >
+      <div className="p-4 max-w-md min-h-[calc(100vh-56px)] mx-auto flex flex-col items-center justify-center">
+        <div className="absolute top-5 right-5 flex items-center space-x-1 text-sm text-white z-10">
           <label htmlFor="scroll-toggle" className="font-bold opacity-25">
             Auto-Scroll
           </label>
@@ -100,25 +89,17 @@ export default function SearchInput({
           <label
             htmlFor="scroll-toggle"
             className={`w-10 h-5 flex items-center border-1 rounded-full p-1 transition ${
-              autoScroll ? "bg-[--foreground]" : "bg-[--background]"
+              autoScroll ? "bg-(--foreground)" : "bg-(--background)"
             }`}
           >
-            <motion.div
-              className="bg-white w-3 h-3 rounded-full shadow-md transform"
-              layout
-              transition={{ type: "spring", stiffness: 300, damping: 20 }}
-              animate={{ x: autoScroll ? 16 : 0 }}
+            <div
+              className={`bg-white w-3 h-3 rounded-full shadow-md transform transition ${
+                autoScroll ? "translate-x-4" : "translate-x-0"
+              }`}
             />
           </label>
-        </motion.div>
-
-        {/* Input */}
-        <motion.div
-          className="relative w-full mb-4"
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3, duration: 0.4 }}
-        >
+        </div>
+        <div className="relative w-full mb-4">
           <motion.input
             ref={inputRef}
             type="text"
@@ -147,28 +128,10 @@ export default function SearchInput({
               &#10005;
             </motion.button>
           )}
-        </motion.div>
-
-        {/* Scanner */}
-        <motion.div
-          initial={{ opacity: 0, scale: 0.95 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ delay: 0.4, duration: 0.3 }}
-          className="w-full"
-        >
-          <BarcodeScanner onDetected={handleDetected} />
-        </motion.div>
-      </motion.div>
-
-      {/* Résultat */}
-      <motion.div
-        ref={resultRef}
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.5, duration: 0.3 }}
-      >
-        {data ? <SearchResult data={data} /> : <></>}
-      </motion.div>
+        </div>
+        <BarcodeScanner onDetected={handleDetected}/>
+      </div>
+      <div ref={resultRef}>{data ? <SearchResult data={data} /> : <></>}</div>
     </>
   );
 }
