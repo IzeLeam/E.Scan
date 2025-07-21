@@ -4,45 +4,37 @@ import { useRef, useState } from 'react';
 // @ts-expect-error: Quagga n’a pas de types
 import Quagga from 'quagga';
 
-export default function BarcodeScanner({ onDetected }: { onDetected?: (code: string) => void }) {
+export default function BarcodeScanner({ onDetected }: { onDetected?: (code: string) => void;}) {
   const scannerRef = useRef<HTMLDivElement>(null);
   const [isRunning, setIsRunning] = useState(false);
-  const [scannedCodes, setScannedCodes] = useState<{ code: string; frequency: number }[]>([]);
 
   interface ScannedCode {
     code: string;
     frequency: number;
   }
 
-  const addScannedCode = (code: string) => {
-    setScannedCodes((prev) => {
-      let updated: { code: string; frequency: number }[];
+  const scannedCodes: ScannedCode[] = [];
 
-      const existing = prev.find((c) => c.code === code);
-      if (existing) {
-        updated = prev.map((c) =>
-          c.code === code ? { ...c, frequency: c.frequency + 1 } : c
-        );
-      } else {
-        updated = [...prev, { code, frequency: 1 }];
-      }
+  function addScannedCode(code: string) {
+    const existingCode = scannedCodes.find((c) => c.code === code);
+    if (existingCode) {
+      existingCode.frequency += 1;
+    } else {
+      scannedCodes.push({ code, frequency: 1 });
+    }
+    scannedCodes.sort((a, b) => b.frequency - a.frequency);
+  }
 
-      // Tri par fréquence décroissante
-      updated.sort((a, b) => b.frequency - a.frequency);
-      return updated;
-    });
-  };
-
-  const getTotalCount = () => {
+  function getTotalCount(): number {
       return scannedCodes.reduce((total, code) => total + code.frequency, 0);
   }
 
-  const getMostFrequentCode = (): ScannedCode | null => {
+  function getMostFrequentCode(): ScannedCode | null {
       if (scannedCodes.length === 0) return null;
       return scannedCodes[0];
   }
 
-  const getMostProbableCode = (): string | null => {
+  function getMostProbableCode(): string | null {
     const TRESHOLD_NUMBER_CODES = 10;
     if (scannedCodes.length === 0) return null;
     if (getTotalCount() < TRESHOLD_NUMBER_CODES) return null;
