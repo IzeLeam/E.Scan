@@ -4,10 +4,6 @@ import { useRef, useState } from 'react';
 // @ts-expect-error: Quagga n’a pas de types
 import Quagga from 'quagga';
 
-import ProgressBar from './ProgressBar';
-import { get } from 'http';
-import { on } from 'events';
-
 export default function BarcodeScanner({
   onDetected,
 }: {
@@ -33,17 +29,27 @@ export default function BarcodeScanner({
     scannedCodes.sort((a, b) => b.frequency - a.frequency);
   }
 
-  function getMostFrequentCode(): string | null {
+  function getTotalCount(): number {
+      return scannedCodes.reduce((total, code) => total + code.frequency, 0);
+  }
+
+  function getMostFrequentCode(): ScannedCode | null {
+      if (scannedCodes.length === 0) return null;
+      return scannedCodes[0];
+  }
+
+  function getMostProbableCode(): string | null {
+    const TRESHOLD_NUMBER_CODES = 10;
     if (scannedCodes.length === 0) return null;
-    return scannedCodes[0].code;
-  }
+    if (getTotalCount() < TRESHOLD_NUMBER_CODES) return null;
 
-  function getTotalScannedCount(): number {
-    return scannedCodes.reduce((total, code) => total + code.frequency, 0);
-  }
-
-  function getTopCodes(limit: number): ScannedCode[] {
-    return scannedCodes.slice(0, limit);
+    const TRESHOLD_PERCENTAGE = 0.8;
+    const mostFrequentCode = getMostFrequentCode();
+    if (!mostFrequentCode) return null;
+    if ((mostFrequentCode.frequency * 100 / getTotalCount()) < TRESHOLD_PERCENTAGE) {
+        return null;
+    }
+    return mostFrequentCode.code;
   }
 
   const startScanner = () => {
@@ -54,20 +60,27 @@ export default function BarcodeScanner({
 
     Quagga.init(
       {
-        inputStream: {
-          name: 'Live',
-          type: 'LiveStream',
-          target: scannerRef.current,
-          constraints: {
-            width: 480,
-            height: 320,
-            facingMode: 'environment',
-          },
+      inputStream: {
+        name: 'Live',
+        type: 'LiveStream',
+        target: scannerRef.current,
+        constraints: {
+        width: { ideal: 1280 },
+        height: { ideal: 720 },
+        facingMode: 'environment',
+        aspectRatio: { ideal: 1.777 },
         },
-        decoder: {
-          readers: ['ean_reader'],
-        },
-        locate: true,
+        area: {
+        top: "20%",
+        right: "20%",
+        left: "20%",
+        bottom: "20%",
+        }
+      },
+      decoder: {
+        readers: ['ean_reader'],
+      },
+      locate: true,
       },
       (err: Error | null) => {
         if (err) {
@@ -81,15 +94,14 @@ export default function BarcodeScanner({
 
     Quagga.onDetected((result: { codeResult: { code: string } }) => {
       const code: string = result.codeResult.code;
-      if (onDetected) return onDetected(code);
-      /*
-      if (getTotalScannedCount() === 100) {
-        stopScanner();
-        const mostFrequentCode = getMostFrequentCode();
-        if (onDetected && mostFrequentCode) onDetected(mostFrequentCode);
-      }
       addScannedCode(code);
-      */
+      const mostProbableCode = getMostProbableCode();
+      if (mostProbableCode) {
+        stopScanner();
+        if (typeof onDetected === 'function') {
+          onDetected(mostProbableCode);
+        }
+      }
     });
   };
 
@@ -106,6 +118,21 @@ export default function BarcodeScanner({
         className="w-full rounded max-w-md h-48 relative overflow-hidden"
         style={{ background: 'rgba(0, 0, 0, 0.5)'}}
       >
+        <div
+          className="absolute inset-0 flex items-center justify-center pointer-events-none z-10"
+        >
+          {isRunning && (
+            <div
+              style={{
+                width: '40%',
+                height: '60%',
+                border: '2px solid',
+                borderStyle: 'dashed',
+                borderRadius: '0.5rem',
+              }}
+            ></div>
+          )}
+        </div>
         <button
           onClick={isRunning ? stopScanner : startScanner}
           className={`text-(--background) bg-(--foreground) border border-white rounded px-4 py-2 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-10${isRunning ? ' hidden' : ''}`}
@@ -113,8 +140,6 @@ export default function BarcodeScanner({
           Start Scanner
         </button>
       </div>
-
-      <ProgressBar progress={getTotalScannedCount()} />
 
       <style jsx global>{`
         #scanner-container video,
