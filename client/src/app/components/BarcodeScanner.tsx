@@ -47,7 +47,7 @@ export default function BarcodeScanner({
 
     Quagga.onDetected((result: { codeResult: { code: string } }) => {
       const code: string = result.codeResult.code;
-      stopScanner();
+      //stopScanner();
       if (onDetected) onDetected(code);
     });
   };
