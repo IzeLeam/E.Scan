@@ -108,6 +108,7 @@ export default function BarcodeScanner({
   const stopScanner = () => {
     Quagga.stop();
     setIsRunning(false);
+    scannedCodes.length = 0;
   };
 
   return (
