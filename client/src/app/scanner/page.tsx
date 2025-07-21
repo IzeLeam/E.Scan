@@ -30,19 +30,23 @@ export default function ScannerPage() {
         return scannedCodes.reduce((total, code) => total + code.count, 0);
     }
 
-    function isValidEAN13(code: string): boolean {
-        if (!/^\d{13}$/.test(code)) return false;
+    function getMostFrequentCode(): ScannedCode | null {
+        if (scannedCodes.length === 0) return null;
+        return scannedCodes[0];
+    }
 
-        const digits = code.split('').map(Number);
-        const checksum = digits[12];
+    function getMostProbableCode(): string | null {
+        const TRESHOLD_NUMBER_CODES = 10;
+        if (scannedCodes.length === 0) return null;
+        if (getTotalCount() < TRESHOLD_NUMBER_CODES) return null;
 
-        const sum =
-            digits
-            .slice(0, 12)
-            .reduce((acc, digit, idx) => acc + digit * (idx % 2 === 0 ? 1 : 3), 0);
-
-        const expected = (10 - (sum % 10)) % 10;
-        return checksum === expected;
+        const TRESHOLD_PERCENTAGE = 0.6;
+        const mostFrequentCode = getMostFrequentCode();
+        if (!mostFrequentCode) return null;
+        if ((mostFrequentCode.count * 100 / getTotalCount()) < TRESHOLD_PERCENTAGE) {
+            return null;
+        }
+        return mostFrequentCode.code;
     }
 
     return (
@@ -53,12 +57,16 @@ export default function ScannerPage() {
             <BarcodeScanner onDetected={handleCodeDetected} />
 
             <div className="px-5 py-4">
+                <h3 className="text-lg font-semibold">Detected Code:</h3>
+                <p className="text-gray-700">
+                    {getMostProbableCode() ? getMostProbableCode() : "No code detected yet."}
+                </p>
                 <h3 className="text-lg font-semibold">Scanned Codes:</h3>
                 <ul className="list-disc pl-5">
                     {scannedCodes.map((item, index) => (
                         <li
                             key={index}
-                            className={isValidEAN13(item.code) ? "text-green-600" : "text-red-600"}
+                            className="text-gray-700"
                         >
                             {item.code} - {item.count}
                         </li>
