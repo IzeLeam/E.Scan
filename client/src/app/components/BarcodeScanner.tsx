@@ -6,6 +6,7 @@ import Quagga from 'quagga';
 
 import ProgressBar from './ProgressBar';
 import { get } from 'http';
+import { on } from 'events';
 
 export default function BarcodeScanner({
   onDetected,
@@ -80,12 +81,15 @@ export default function BarcodeScanner({
 
     Quagga.onDetected((result: { codeResult: { code: string } }) => {
       const code: string = result.codeResult.code;
+      if (onDetected) return onDetected(code);
+      /*
       if (getTotalScannedCount() === 100) {
         stopScanner();
         const mostFrequentCode = getMostFrequentCode();
         if (onDetected && mostFrequentCode) onDetected(mostFrequentCode);
       }
       addScannedCode(code);
+      */
     });
   };
 
@@ -109,7 +113,7 @@ export default function BarcodeScanner({
           Start Scanner
         </button>
       </div>
-      
+
       <ProgressBar progress={getTotalScannedCount()} />
 
       <style jsx global>{`
