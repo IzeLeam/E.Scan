@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import BarcodeScanner from "../components/BarcodeScanner";
+import ProgressBar from "../components/ProgressBar";
 
 export default function ScannerPage() {
     interface ScannedCode {
@@ -22,9 +23,17 @@ export default function ScannerPage() {
             } else {
                 updatedCodes = [...prevCodes, { code, count: 1 }];
             }
-            // Sort by count descending
             return [...updatedCodes].sort((a, b) => b.count - a.count);
         });
+    }
+
+    function getTotalCount(): number {
+        return scannedCodes.reduce((total, code) => total + code.count, 0);
+    }
+
+    function getHighestCountedCode(): string | null {
+        if (scannedCodes.length === 0) return null;
+        return scannedCodes[0].code;
     }
 
     return (
@@ -34,6 +43,7 @@ export default function ScannerPage() {
 
             <BarcodeScanner onDetected={handleCodeDetected} />
 
+            <ProgressBar progress={getTotalCount()} />
             <div className="px-5 py-4">
                 <h3 className="text-lg font-semibold">Scanned Codes:</h3>
                 <ul className="list-disc pl-5">
