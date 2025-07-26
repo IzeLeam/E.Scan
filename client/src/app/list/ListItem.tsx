@@ -19,7 +19,7 @@ const formatDate = (date: Date): string => {
     let day = '';
     if (daysAgo === 0) day = 'Today';
     else if (daysAgo === 1) day = 'Yesterday';
-    else if (daysAgo < 7) `${daysAgo} days ago`;
+    else if (daysAgo < 7) day = `${daysAgo} days ago`;
     else {
         return new Date(date).toLocaleDateString() + ', ' + new Date(date).toLocaleTimeString();
     }
