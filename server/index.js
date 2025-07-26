@@ -4,6 +4,8 @@ const fs = require("fs");
 const cors = require("cors");
 const path = require("path");
 
+const { Product, ListManager } = require("./list");
+
 const app = express();
 app.use(cors({
   origin: ['https://escan.lucaprc.fr', 'http://localhost:3000', 'http://192.168.1.92:3000'],
@@ -12,6 +14,8 @@ app.use(cors({
 }));
 
 app.use(express.json());
+
+const listManager = new ListManager();
 
 app.get("/", (req, res) => {
   res.send("Welcome to the E.Leclerc Product Search API");
@@ -116,17 +120,100 @@ async function handleSearch(ean, res) {
   }
 }
 
-app.post("/search", async (req, res) => {
-  const ean = req.body.ean;
-  await handleSearch(ean, res);
-});
-
 app.get("/search", async (req, res) => {
   const ean = req.query.ean;
   await handleSearch(ean, res);
 });
 
+
+/*
+  * List Management Endpoints
+  */
+app.get("/list", (req, res) => {
+  const lists = listManager.getAllLists();
+  res.status(200).json(lists);
+})
+
+app.post("/list", (req, res) => {
+  const { name } = req.body;
+  if (!name) {
+    return res.status(400).json({ error: "Missing 'name'" });
+  }
+  listManager.createList(name);
+  res.status(201).json({ message: "List created successfully" });
+})
+
+app.delete("/list/:id", (req, res) => {
+  const id = req.params.id;
+  listManager.deleteList(id);
+  res.status(204).send();
+})
+
+/*
+  * Product Management Endpoints
+  */
+ app.get("/list/:id", (req, res) => {
+  const id = req.params.id;
+  const list = listManager.getListById(id);
+  if (!list) {
+    return res.status(404).json({ error: "List not found" });
+  }
+  res.status(200).json(list);
+});
+
+app.post("/list/:id/product", (req, res) => {
+  const id = req.params.id;
+  const { ean, quantity } = req.body;
+
+  if (!ean) {
+    return res.status(400).json({ error: "Missing 'ean'" });
+  }
+
+  const list = listManager.getListById(id);
+  if (!list) {
+    return res.status(404).json({ error: "List not found" });
+  }
+
+  const product = new Product(ean, quantity);
+  list.addProduct(product);
+  res.status(201).json(product);
+});
+
+app.delete("/list/:id/product/:ean", (req, res) => {
+  const id = req.params.id;
+  const ean = req.params.ean;
+
+  const list = listManager.getListById(id);
+  if (!list) {
+    return res.status(404).json({ error: "List not found" });
+  }
+
+  const product = list.products.find(p => p.ean === ean);
+  if (!product) {
+    return res.status(404).json({ error: "Product not found in list" });
+  }
+
+  list.removeProduct(product);
+  res.status(204).send();
+});
+
 const PORT = process.env.PORT || 9999;
-app.listen(PORT, () => {
+const server = app.listen(PORT, () => {
   console.log(`🚀 Server is running on http://localhost:${PORT}`);
+});
+
+const shutdown = () => {
+  console.log("Shutting down server...");
+  listManager.saveLists();
+  server.close(() => {
+    console.log("Server shut down gracefully.");
+    process.exit(0);
+  });
+}
+
+process.on('SIGINT', shutdown);
+process.on('SIGTERM', shutdown);
+process.on('uncaughtException', (err) => {
+  console.error("Uncaught Exception:", err);
+  shutdown();
 });

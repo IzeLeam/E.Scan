@@ -9,7 +9,7 @@ const NAV_ITEMS = [
 
 export default function BottomNavbar() {
   return (
-    <nav className="fixed bottom-0 left-0 w-full bg-white shadow-xl z-50">
+    <nav className="fixed bottom-0 left-0 w-full bg-white shadow-[0_-4px_6px_-2px_rgba(0,0,0,0.1)] z-50">
       <div className="flex justify-evenly items-center py-3.5 relative">
         {NAV_ITEMS.map((item, index) => (
           <Link key={index} href={item.href}>
