@@ -23,7 +23,7 @@ export default function ListPage() {
   const [lists, setLists] = useState<List[]>([]);
 
   useEffect(() => {
-    fetch('http://localhost:9999/list')
+    fetch('https://api.escan.lucaprc.fr/list')
       .then(res => res.json())
       .then(data => setLists(data));
   }, []);

@@ -13,7 +13,7 @@ export default function NewListPage() {
   
 
   const handleCreate = async () => {
-    await fetch('http://localhost:9999/list', {
+    await fetch('https://api.escan.lucaprc.fr/list', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ name }),
