@@ -16,7 +16,7 @@ export default function ListDetailPage() {
   const [quantity, setQuantity] = useState<number>(1);
 
   const fetchList = () => {
-    fetch(`http://localhost:9999/list/${id}`)
+    fetch(`https://api.escan.lucaprc.fr/list/${id}`)
       .then(res => res.json())
       .then(data => setList(data));
   };
@@ -26,7 +26,7 @@ export default function ListDetailPage() {
   }, [id]);
 
   const handleAddProduct = async () => {
-    await fetch(`http://localhost:9999/list/${id}/product`, {
+    await fetch(`https://api.escan.lucaprc.fr/list/${id}/product`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ ean, quantity }),
@@ -36,7 +36,7 @@ export default function ListDetailPage() {
   };
 
   const handleDeleteProduct = async (ean: string) => {
-    await fetch(`http://localhost:9999/list/${id}/product/${ean}`, {
+    await fetch(`https://api.escan.lucaprc.fr/list/${id}/product/${ean}`, {
       method: 'DELETE',
     });
     fetchList();
