@@ -47,10 +47,8 @@ export default function SearchInput({ initialEAN = "" }: { initialEAN?: string }
         notify({
           message: "Product found",
         });
-        // Unfocus input after search
         inputRef.current?.blur();
 
-        // Scroll to result if auto-scroll is enabled
         if (autoScroll) {
           setTimeout(() => {
             resultRef.current?.scrollIntoView({
