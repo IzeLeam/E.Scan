@@ -25,10 +25,16 @@ const formatDate = (date: Date): string => {
     }
 
     return day + ', ' + new Date(date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-
 }
 
 export default function ListItem({ list }: { list: List }) {
+
+  const handleDelete = async () => {
+    await fetch(`https://api.escan.lucaprc.fr/list/${list.id}`, {
+      method: 'DELETE',
+    });
+  }
+
   return (
     <div className="w-full p-4 bg-white border rounded-lg shadow-md flex flex-col">
       {/* En-tête */}
@@ -84,7 +90,8 @@ export default function ListItem({ list }: { list: List }) {
         </Link>
         <button
           aria-label="Delete this list"
-          onClick={() => alert('Delete functionality not implemented yet')}
+          onClick={() => handleDelete()}
+          className="ml-2 text-gray-500 hover:text-red-500 transition-colors"
         >
           <svg
             fill="#000000"

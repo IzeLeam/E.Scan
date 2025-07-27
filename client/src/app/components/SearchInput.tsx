@@ -3,7 +3,9 @@
 import BarcodeScanner from "./BarcodeScanner";
 import { useRef, useState, useEffect } from "react";
 import SearchResult from "./SearchResult";
-import { motion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
+import { useNotification } from "./notifications/NotificationProvider";
+import { useIsScrolled } from "../hook/useIsScrolled";
 
 export default function SearchInput({ initialEAN = "" }: { initialEAN?: string }) {
   const [eanValue, setEanValue] = useState(initialEAN);
@@ -18,8 +20,12 @@ export default function SearchInput({ initialEAN = "" }: { initialEAN?: string }
     rawData: string;
   }>(null);
 
+  const topRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const resultRef = useRef<HTMLDivElement>(null);
+  const isScrolled = useIsScrolled(250);
+
+  const { notify } = useNotification();
 
   useEffect(() => {
     if (/^\d{13}$/.test(initialEAN)) {
@@ -32,13 +38,23 @@ export default function SearchInput({ initialEAN = "" }: { initialEAN?: string }
       const res = await fetch(`https://api.escan.lucaprc.fr/search?ean=${ean}`);
       const fetchedData = await res.json();
       setData(fetchedData);
-      if (autoScroll) {
-        setTimeout(() => {
-          resultRef.current?.scrollIntoView({
-            behavior: "smooth",
-            block: "start",
-          });
-        }, 100);
+      if (fetchedData.rawData.items.length === 0) {
+        notify({
+          message: "Product not found",
+          error: true,
+        });
+      } else {
+        notify({
+          message: "Product found",
+        });
+        if (autoScroll) {
+          setTimeout(() => {
+            resultRef.current?.scrollIntoView({
+              behavior: "smooth",
+              block: "start",
+            });
+          }, 100);
+        }
       }
     } catch (error) {
       console.error("Erreur lors de la récupération des données", error);
@@ -70,8 +86,51 @@ export default function SearchInput({ initialEAN = "" }: { initialEAN?: string }
 
   return (
     <>
+      <AnimatePresence>
+        {isScrolled && (
+          <motion.div
+            key="scroll-button"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            className="fixed right-12 bottom-[calc(56px+1.5rem)] z-50"
+          >
+            <button
+              className="w-14 h-14 bg-(--foreground) hover:bg-blue-700 text-white rounded-full flex items-center justify-center shadow-lg transition-colors duration-200"
+              onClick={() => {
+                topRef.current?.scrollIntoView({
+                  behavior: "smooth",
+                  block: "start",
+                });
+              }}
+              aria-label="Top of page"
+              title="Top of page"
+            >
+              <svg
+                className="w-[32px] h-[32px] text-gray-800 dark:text-white"
+                aria-hidden="true"
+                xmlns="http://www.w3.org/2000/svg"
+                width="32"
+                height="32"
+                fill="none"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke="currentColor"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M12 6v13m0-13 4 4m-4-4-4 4"
+                />
+              </svg>
+            </button>
+          </motion.div>
+        )}
+      </AnimatePresence>
       <motion.div
         className="p-4 max-w-md min-h-[calc(100vh-56px)] mx-auto flex flex-col items-center justify-center"
+        ref={topRef}
         initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4 }}
