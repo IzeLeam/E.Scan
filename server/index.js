@@ -1,13 +1,20 @@
 const express = require("express");
 const axios = require("axios");
 const cors = require("cors");
+const fs = require("fs");
 
 const app = express();
-app.use(cors({
-  origin: ['https://escan.lucaprc.fr', 'http://localhost:3000', 'http://192.168.1.92:3000'],
-  methods: ['GET', 'POST'],
-  credentials: true,
-}));
+app.use(
+  cors({
+    origin: [
+      "https://escan.lucaprc.fr",
+      "http://localhost:3000",
+      "http://192.168.1.92:3000",
+    ],
+    methods: ["GET", "POST"],
+    credentials: true,
+  })
+);
 
 app.use(express.json());
 
@@ -30,20 +37,21 @@ async function handleSearch(ean, res) {
 
   try {
     const headers = {
-      "Host": "www.e.leclerc",
-      "User-Agent": "Mozilla/5.0 (X11; Linux x86_64; rv:128.0) Gecko/20100101 Firefox/128.0",
-      "Accept": "application/json, text/plain, */*",
+      Host: "www.e.leclerc",
+      "User-Agent":
+        "Mozilla/5.0 (X11; Linux x86_64; rv:128.0) Gecko/20100101 Firefox/128.0",
+      Accept: "application/json, text/plain, */*",
       "Accept-Language": "en-US,en;q=0.5",
       "Content-Type": "application/json",
-      "Origin": "https://www.e.leclerc",
-      "Referer": `https://www.e.leclerc/recherche?q=${ean}&result=0`,
-      "Connection": "keep-alive",
+      Origin: "https://www.e.leclerc",
+      Referer: `https://www.e.leclerc/recherche?q=${ean}&result=0`,
+      Connection: "keep-alive",
       "Sec-Fetch-Dest": "empty",
       "Sec-Fetch-Mode": "cors",
       "Sec-Fetch-Site": "same-origin",
-      "Pragma": "no-cache",
+      Pragma: "no-cache",
       "Cache-Control": "no-cache",
-      "Cookie": fs.readFileSync("cookies.txt", "utf8").trim(),
+      Cookie: fs.readFileSync("cookies.txt", "utf8").trim(),
     };
 
     const response = await axios.post(
@@ -60,21 +68,25 @@ async function handleSearch(ean, res) {
     data.title = title;
 
     // Get the description (data.description)
-    const description = rawData.items?.[0]?.variants?.[0]?.attributes
-      ?.find(attr => attr.code == "description")?.value || "No description found";
+    const description =
+      rawData.items?.[0]?.variants?.[0]?.attributes?.find(
+        (attr) => attr.code == "description"
+      )?.value || "No description found";
     data.description = description;
 
     // Get the images (data.images[])
-    const images = rawData.items?.[0]?.variants?.[0]?.attributes
-      ?.filter(attr => attr.type === "image")
-      ?.map(attr => attr.value.url)
-      .filter(url => /^https:\/\/media\.e\.leclerc/.test(url)) || [];
+    const images =
+      rawData.items?.[0]?.variants?.[0]?.attributes
+        ?.filter((attr) => attr.type === "image")
+        ?.map((attr) => attr.value.url)
+        .filter((url) => /^https:\/\/media\.e\.leclerc/.test(url)) || [];
     data.images = images;
 
     // Get the offer of our local store (data.offer)
-    const offer = rawData.items?.[0]?.variants?.[0]?.offers?.find(
-      offer => offer.shop?.signCode === "0772"
-    ) || {};
+    const offer =
+      rawData.items?.[0]?.variants?.[0]?.offers?.find(
+        (offer) => offer.shop?.signCode === "0772"
+      ) || {};
 
     data.offer = !!offer;
 
@@ -84,12 +96,12 @@ async function handleSearch(ean, res) {
       price = parseFloat(price.replace(/[^0-9.-]+/g, ""));
     }
     if (isNaN(price)) {
-      price = 0.00;
+      price = 0.0;
     }
     // Convert price to a string with two decimal places
     price = (price / 100).toFixed(2);
     if (isNaN(price)) {
-      price = 0.00;
+      price = 0.0;
     }
     data.price = price;
 
@@ -98,14 +110,20 @@ async function handleSearch(ean, res) {
     if (typeof stock === "string") {
       stock = 0;
     }
-    data.stock = (stock > 0) ? stock + 1 : stock;
+    data.stock = stock > 0 ? stock + 1 : stock;
 
-    //Include rawData in response
     data.rawData = rawData;
 
     res.status(200).json(data);
   } catch (err) {
-    console.error("Error while fetching data:", err.response?.status, err.response?.data);
+    console.error(
+      "Error while fetching data:",
+      err.message,
+      err.stack,
+      err.response,
+      err.response?.status,
+      err.response?.data
+    );
     res.status(500).json({
       error: "Request failed",
       status: err.response?.status,
@@ -121,20 +139,20 @@ app.get("/search", async (req, res) => {
 
 const PORT = process.env.PORT || 9999;
 const server = app.listen(PORT, () => {
-  console.log(`🚀 Server is running on http://localhost:${PORT}`);
+  console.log(`🚀 Server is running on port ${PORT}`);
 });
 
 const shutdown = () => {
   console.log("Shutting down server...");
   server.close(() => {
-    console.log("Server shut down gracefully.");
+    console.log("Server shut down.");
     process.exit(0);
   });
-}
+};
 
-process.on('SIGINT', shutdown);
-process.on('SIGTERM', shutdown);
-process.on('uncaughtException', (err) => {
+process.on("SIGINT", shutdown);
+process.on("SIGTERM", shutdown);
+process.on("uncaughtException", (err) => {
   console.error("Uncaught Exception:", err);
   shutdown();
 });
