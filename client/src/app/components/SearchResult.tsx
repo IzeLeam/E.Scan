@@ -2,6 +2,7 @@
 
 import Slider from "react-slick";
 import { motion } from "framer-motion";
+import AddToList from "./addToList";
 
 type Props = {
   data: {
@@ -72,16 +73,8 @@ export default function SearchResult({ data }: Props) {
         </Slider>
       </motion.div>
 
-      <motion.hr
-        className="my-2 w-[calc(100%-3rem)] mx-auto"
-        initial={{ scaleX: 0 }}
-        animate={{ scaleX: 1 }}
-        transition={{ delay: 0.5, duration: 0.3 }}
-        style={{ transformOrigin: "left" }}
-      />
-
       <motion.div
-        className="flex items-center justify-around px-5"
+        className="w-full bg-(--background) flex items-center justify-around py-3 px-5 shadow-lg"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 0.6 }}
@@ -89,12 +82,12 @@ export default function SearchResult({ data }: Props) {
         {data.offer || data.stock > 0 ? (
           <>
             <div>
-              <h3 className="text-lg inline-block mr-3 text-gray-900 font-semibold">Prix:</h3>
-              <span className="text-lg text-gray-800">{data.price ?? "No price found"} €</span>
+              <h3 className="text-lg inline-block mr-3 text-gray-400 font-semibold">Prix:</h3>
+              <span className="text-lg text-white">{data.price ?? "No price found"} €</span>
             </div>
             <div>
-              <h3 className="text-lg inline-block mr-3 text-gray-900 font-semibold">Stock:</h3>
-              <span className="text-lg text-gray-800">
+              <h3 className="text-lg inline-block mr-3 text-gray-400 font-semibold">Stock:</h3>
+              <span className="text-lg text-white">
                 {data.stock ?? "No stock information"}
               </span>
             </div>
@@ -106,26 +99,18 @@ export default function SearchResult({ data }: Props) {
         )}
       </motion.div>
 
-      <motion.hr
-        className="my-2 w-[calc(100%-3rem)] mx-auto"
-        initial={{ scaleX: 0 }}
-        animate={{ scaleX: 1 }}
-        transition={{ delay: 0.7, duration: 0.3 }}
-        style={{ transformOrigin: "left" }}
-      />
-
       <motion.details
         className="pl-5 mt-3"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 0.75 }}
-        open={true}
+        open={false}
       >
         <summary className="text-lg text-gray-900 font-semibold cursor-pointer">
           Description
         </summary>
         <motion.div
-          className="mt-2 pl-3 text-sm text-gray-800"
+          className="mt-2 px-3 text-sm text-gray-800"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.8 }}
