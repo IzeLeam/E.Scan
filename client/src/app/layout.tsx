@@ -1,10 +1,9 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import BottomNavbar from "./components/NavBar";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
-import { NotificationProvider } from "./components/notifications/NotificationProvider";
+import { NotificationProvider } from "./components/notifications/NotificationProvider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -30,7 +29,6 @@ export default function RootLayout({ children, }: Readonly<{ children: React.Rea
         <NotificationProvider>
           {children}
         </NotificationProvider>
-        <BottomNavbar />
       </body>
     </html>
   );

@@ -94,7 +94,7 @@ export default function SearchInput({ initialEAN = "" }: { initialEAN?: string }
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.2 }}
-            className="fixed right-12 bottom-[calc(56px+1.5rem)] z-50"
+            className="fixed right-12 bottom-[1.5rem] z-50"
           >
             <button
               className="w-14 h-14 bg-(--foreground) hover:bg-blue-700 text-white rounded-full flex items-center justify-center shadow-lg transition-colors duration-200"
@@ -129,7 +129,7 @@ export default function SearchInput({ initialEAN = "" }: { initialEAN?: string }
         )}
       </AnimatePresence>
       <motion.div
-        className="p-4 max-w-md min-h-[calc(100vh-56px)] mx-auto flex flex-col items-center justify-center"
+        className="p-4 max-w-md h-[100vh] mx-auto flex flex-col items-center justify-center"
         ref={topRef}
         initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}

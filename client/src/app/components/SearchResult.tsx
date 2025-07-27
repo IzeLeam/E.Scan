@@ -2,7 +2,6 @@
 
 import Slider from "react-slick";
 import { motion } from "framer-motion";
-import AddToList from "./addToList";
 
 type Props = {
   data: {
@@ -30,7 +29,7 @@ export default function SearchResult({ data }: Props) {
 
   return (
     <motion.div
-      className="w-full bg-white rounded min-h-[calc(100vh-56px)] mb-[56px] shadow-md mt-6 overflow-hidden"
+      className="w-full bg-white rounded min-h-[100vh] mb-[56px] shadow-md mt-6 overflow-hidden"
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4 }}
@@ -104,7 +103,7 @@ export default function SearchResult({ data }: Props) {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 0.75 }}
-        open={false}
+        open={true}
       >
         <summary className="text-lg text-gray-900 font-semibold cursor-pointer">
           Description
@@ -122,7 +121,8 @@ export default function SearchResult({ data }: Props) {
           )}
         </motion.div>
       </motion.details>
-
+      
+      {/* Raw Data Section for debugging
       <motion.details
         className="pl-5 mt-3"
         initial={{ opacity: 0 }}
@@ -149,6 +149,7 @@ export default function SearchResult({ data }: Props) {
             : JSON.stringify(data.rawData, null, 2)}
         </motion.pre>
       </motion.details>
+      */}
     </motion.div>
   );
 }
