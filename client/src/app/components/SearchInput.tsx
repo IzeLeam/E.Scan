@@ -33,6 +33,27 @@ export default function SearchInput({ initialEAN = "" }: { initialEAN?: string }
     }
   }, [initialEAN]);
 
+  useEffect(() => {
+    let ticking = false;
+
+    const onScroll = () => {
+      if (ticking) return;
+      ticking = true;
+
+      requestAnimationFrame(() => {
+        const rect = topRef.current?.getBoundingClientRect();
+        if (rect && rect.top < 250 && rect.top > 0) {
+          topRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+        }
+        ticking = false;
+      });
+    };
+
+    window.addEventListener("scroll", onScroll);
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+
   const handleSearch = async (ean: string) => {
     try {
       const res = await fetch(`https://api.escan.lucaprc.fr/search?ean=${ean}`);

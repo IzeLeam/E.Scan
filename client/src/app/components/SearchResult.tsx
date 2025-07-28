@@ -29,7 +29,8 @@ export default function SearchResult({ data }: Props) {
 
   return (
     <motion.div
-      className="w-full bg-white rounded min-h-[100vh] mb-[56px] shadow-md mt-6 overflow-hidden"
+      className="w-full rounded min-h-[100vh] shadow-md overflow-hidden"
+      style={{ backgroundColor: "#F0F8FF" }}
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4 }}
