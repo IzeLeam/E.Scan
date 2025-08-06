@@ -3,7 +3,6 @@ const axios = require("axios");
 const cors = require("cors");
 const fs = require("fs");
 const app = express();
-const cookieParser = require("cookie-parser");
 
 const { handleSearch } = require("./leclerc");
 
@@ -20,7 +19,6 @@ app.use(
 );
 
 app.use(express.json());
-app.use(cookieParser());
 
 app.get("/", (req, res) => {
   res.send("Welcome to the E.Leclerc Product Search API");
