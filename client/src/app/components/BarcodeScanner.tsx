@@ -154,7 +154,7 @@ export default function BarcodeScanner({ onDetected }: { onDetected?: (code: str
               exit={{ scale: 0.8, opacity: 0 }}
               transition={{ duration: 0.3 }}
             >
-              Start Scanner
+              Scanner un produit
             </motion.button>
           )}
         </AnimatePresence>
