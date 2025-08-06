@@ -1,3 +1,6 @@
+import axios from "axios";
+import fs from "fs";
+
 export async function handleSearch(ean, res) {
   if (!ean) return res.status(400).json({ error: "Missing 'ean'" });
 
@@ -37,7 +40,7 @@ export async function handleSearch(ean, res) {
     );
 
     const rawData = response.data;
-    data = {};
+    let data = {};
 
     // Get the title (data.title)
     const title = rawData.items?.[0]?.label || "No title found";
@@ -67,7 +70,7 @@ export async function handleSearch(ean, res) {
     data.offer = !!offer;
 
     // Get the price (data.price)
-    price = offer.basePrice?.price?.priceWithAllTaxes || "No price found";
+    let price = offer.basePrice?.price?.priceWithAllTaxes || "No price found";
     if (typeof price === "string") {
       price = parseFloat(price.replace(/[^0-9.-]+/g, ""));
     }
@@ -82,7 +85,7 @@ export async function handleSearch(ean, res) {
     data.price = price;
 
     // Get the stock (data.stock)
-    stock = offer.stock || "No stock information found";
+    let stock = offer.stock || "No stock information found";
     if (typeof stock === "string") {
       stock = 0;
     }
