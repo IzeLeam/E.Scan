@@ -58,7 +58,7 @@ export default function SearchResult({ data }: Props) {
             aria-label="Share"
             className="p-2 rounded-full hover:bg-gray-100 transition"
             onClick={() => {
-              const shareUrl = "https://escan.lucaprc.fr/search?ean=" + data.ean;
+              const shareUrl = "https://escan.lucaprc.fr/?ean=" + data.ean;
 
               if (navigator.share) {
                 navigator.share({
