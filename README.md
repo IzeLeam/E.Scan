@@ -3,7 +3,7 @@
 Application web à destination des employés E.Leclerc pour consulter rapidement les stocks produits.
 
 <p align="center">
-    <img src=".github/logo.png" alt="Logo" width="45%"/>
+    <img src=".github/logo.png" alt="Logo" width="30%"/>
 </p>
 
 ## Description
