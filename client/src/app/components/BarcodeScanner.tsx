@@ -1,7 +1,7 @@
 'use client';
 
 import { useRef, useState } from 'react';
-// @ts-expect-error: Quagga n’a pas de types
+// @ts-expect-error
 import Quagga from 'quagga';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -116,7 +116,6 @@ export default function BarcodeScanner({ onDetected }: { onDetected?: (code: str
         className="w-full rounded max-w-md h-48 relative overflow-hidden"
         style={{ background: 'rgba(0, 0, 0, 0.5)' }}
       >
-        {/* Zone de détection */}
         <AnimatePresence>
           {isRunning && (
             <motion.div
@@ -142,7 +141,6 @@ export default function BarcodeScanner({ onDetected }: { onDetected?: (code: str
           )}
         </AnimatePresence>
 
-        {/* Bouton d’activation */}
         <AnimatePresence>
           {!isRunning && (
             <motion.button
