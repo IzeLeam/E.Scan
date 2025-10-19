@@ -1,7 +1,7 @@
 'use client';
 
 import { useRef, useState } from 'react';
-// @ts-expect-error
+// @ts-expect-error - Quagga library doesn't have TypeScript definitions
 import Quagga from 'quagga';
 import { motion, AnimatePresence } from 'framer-motion';
 

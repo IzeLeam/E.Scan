@@ -28,12 +28,6 @@ export default function SearchInput({ initialEAN = "" }: { initialEAN?: string }
 
   const { notify } = useNotification();
 
-  useEffect(() => {
-    if (/^\d{13}$/.test(initialEAN)) {
-      handleSearch(initialEAN);
-    }
-  }, [initialEAN]);
-
   const handleSearch = async (ean: string) => {
     try {
       const res = await fetch(`https://api.escan.lucaprc.fr/search?ean=${ean}`);
@@ -65,6 +59,13 @@ export default function SearchInput({ initialEAN = "" }: { initialEAN?: string }
       setData(null);
     }
   };
+
+  useEffect(() => {
+    if (/^\d{13}$/.test(initialEAN)) {
+      handleSearch(initialEAN);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [initialEAN]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const ean = e.target.value.replaceAll(" ", "");
