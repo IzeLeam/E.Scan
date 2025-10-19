@@ -1,10 +1,11 @@
-const express = require("express");
-const cors = require("cors");
-const helmet = require("helmet");
-const rateLimit = require("express-rate-limit");
-require("dotenv").config();
+import express from "express";
+import cors from "cors";
+import helmet from "helmet";
+import rateLimit from "express-rate-limit";
+import dotenv from "dotenv";
+import { handleSearch } from "./leclerc.js";
 
-const { handleSearch } = require("./leclerc");
+dotenv.config();
 
 const app = express();
 
@@ -140,4 +141,4 @@ process.on("unhandledRejection", (reason, promise) => {
   shutdown();
 });
 
-module.exports = app;
+export default app;
