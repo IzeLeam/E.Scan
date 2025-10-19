@@ -101,7 +101,7 @@ export default function SearchInput({ initialEAN = "" }: { initialEAN?: string }
             className="fixed right-12 bottom-[1.5rem] z-50"
           >
             <button
-              className="w-14 h-14 bg-(--foreground) hover:bg-blue-700 text-white rounded-full flex items-center justify-center shadow-lg transition-colors duration-200"
+              className="w-14 h-14 bg-(--foreground) hover:bg-[#ff8575] text-white rounded-full flex items-center justify-center shadow-2xl transition-all duration-300 hover:scale-110 active:scale-95 backdrop-blur-sm"
               onClick={() => {
                 topRef.current?.scrollIntoView({
                   behavior: "smooth",
@@ -109,23 +109,19 @@ export default function SearchInput({ initialEAN = "" }: { initialEAN?: string }
                 });
               }}
               aria-label="Top of page"
-              title="Top of page"
+              title="Retour en haut"
             >
               <svg
-                className="w-[32px] h-[32px] text-gray-800 dark:text-white"
-                aria-hidden="true"
-                xmlns="http://www.w3.org/2000/svg"
-                width="32"
-                height="32"
+                className="w-6 h-6"
                 fill="none"
+                stroke="currentColor"
                 viewBox="0 0 24 24"
               >
                 <path
-                  stroke="currentColor"
                   strokeLinecap="round"
                   strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M12 6v13m0-13 4 4m-4-4-4 4"
+                  strokeWidth="2.5"
+                  d="M5 10l7-7m0 0l7 7m-7-7v18"
                 />
               </svg>
             </button>
@@ -133,19 +129,19 @@ export default function SearchInput({ initialEAN = "" }: { initialEAN?: string }
         )}
       </AnimatePresence>
       <motion.div
-        className="p-4 max-w-md h-[100vh] mx-auto flex flex-col items-center justify-center"
+        className="p-6 max-w-md h-[100vh] mx-auto flex flex-col items-center justify-center"
         ref={topRef}
         initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.4 }}
+        transition={{ duration: 0.5, ease: "easeOut" }}
       >
         <motion.div
-          className="absolute top-5 right-5 flex items-center space-x-1 text-sm text-white z-10"
+          className="absolute top-6 right-6 flex items-center space-x-2 text-sm text-white/70 z-10"
           initial={{ opacity: 0, x: 30 }}
           animate={{ opacity: 1, x: 0 }}
-          transition={{ delay: 0.2, duration: 0.3 }}
+          transition={{ delay: 0.2, duration: 0.4 }}
         >
-          <label htmlFor="scroll-toggle" className="font-bold opacity-25">
+          <label htmlFor="scroll-toggle" className="font-medium text-xs tracking-wide">
             Auto-Scroll
           </label>
           <input
@@ -157,59 +153,86 @@ export default function SearchInput({ initialEAN = "" }: { initialEAN?: string }
           />
           <label
             htmlFor="scroll-toggle"
-            className={`w-10 h-5 flex items-center border-1 rounded-full p-1 transition ${
-              autoScroll ? "bg-(--foreground)" : "bg-(--background)"
+            className={`w-11 h-6 flex items-center rounded-full p-0.5 transition-all duration-300 cursor-pointer ${
+              autoScroll ? "bg-(--foreground)" : "bg-white/20 backdrop-blur-sm"
             }`}
           >
             <motion.div
-              className="bg-white w-3 h-3 rounded-full shadow-md transform"
+              className="bg-white w-5 h-5 rounded-full shadow-lg"
               layout
-              transition={{ type: "spring", stiffness: 300, damping: 20 }}
-              animate={{ x: autoScroll ? 16 : 0 }}
+              transition={{ type: "spring", stiffness: 500, damping: 30 }}
+              animate={{ x: autoScroll ? 18 : 0 }}
             />
           </label>
         </motion.div>
 
         <motion.div
-          className="relative w-full mb-4"
+          className="w-full mb-6"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.3, duration: 0.5 }}
+        >
+          <motion.h1
+            className="text-4xl font-bold text-white mb-2 tracking-tight"
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.4 }}
+          >
+            E.Scan
+          </motion.h1>
+          <motion.p
+            className="text-white/60 text-sm"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.5 }}
+          >
+            Scannez ou entrez un code-barres
+          </motion.p>
+        </motion.div>
+
+        <motion.div
+          className="relative w-full mb-6"
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3, duration: 0.4 }}
+          transition={{ delay: 0.6, duration: 0.4 }}
         >
           <motion.input
             ref={inputRef}
             type="text"
             pattern="\d*"
             inputMode="numeric"
-            placeholder="Entrez un code EAN"
+            placeholder="Entrez un code EAN (13 chiffres)"
             autoComplete="off"
             value={eanValue}
             onChange={handleChange}
-            className="w-full px-4 py-2 rounded border pr-10 text-white bg-transparent"
-            initial={{ scale: 0.95, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            transition={{ duration: 0.3 }}
+            className="w-full px-5 py-4 rounded-2xl border-2 border-white/10 pr-12 text-white bg-white/5 backdrop-blur-md placeholder:text-white/40 focus:border-(--foreground) focus:bg-white/10 transition-all duration-300 outline-none text-lg"
+            whileFocus={{ scale: 1.02 }}
+            transition={{ duration: 0.2 }}
           />
 
-          {eanValue && (
-            <motion.button
-              onClick={handleClear}
-              className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-white"
-              aria-label="Effacer"
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.8 }}
-              transition={{ duration: 0.2 }}
-            >
-              &#10005;
-            </motion.button>
-          )}
+          <AnimatePresence>
+            {eanValue && (
+              <motion.button
+                onClick={handleClear}
+                className="absolute right-4 top-1/2 transform -translate-y-1/2 text-white/50 hover:text-(--foreground) transition-colors duration-200 w-8 h-8 flex items-center justify-center rounded-full hover:bg-white/10"
+                aria-label="Effacer"
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.8 }}
+                transition={{ duration: 0.2 }}
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </motion.button>
+            )}
+          </AnimatePresence>
         </motion.div>
 
         <motion.div
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
-          transition={{ delay: 0.4, duration: 0.3 }}
+          transition={{ delay: 0.7, duration: 0.4 }}
           className="w-full"
         >
           <BarcodeScanner onDetected={handleDetected} />
@@ -224,23 +247,29 @@ export default function SearchInput({ initialEAN = "" }: { initialEAN?: string }
       >
         {data ? <SearchResult data={data} /> : <></>}
       </motion.div>
-      <div className="w-full flex items-center mt-3 mb-2">
-        <span className="text-xs text-gray-500 ml-3">
-          © 2025 Luca Pourceau. Tous droits réservés.
+      <motion.div 
+        className="w-full flex items-center justify-center gap-2 mt-8 mb-6 px-4"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 1, duration: 0.5 }}
+      >
+        <span className="text-xs text-white/30 text-center">
+          © 2025 Luca Pourceau
         </span>
-      
-                <a
+        <span className="text-white/20">•</span>
+        <a
           href="https://lucaprc.fr"
           target="_blank"
           rel="noopener noreferrer"
-          className="text-xs text-gray-500 ml-2 flex items-center"
+          className="text-xs text-white/40 hover:text-(--foreground) transition-colors duration-200 flex items-center gap-1"
         >
+          Site web
           <svg
             viewBox="0 0 24 24"
             fill="none"
             xmlns="http://www.w3.org/2000/svg"
-            width={16}
-            height={16}
+            width={14}
+            height={14}
             className="inline-block"
           >
             <path
@@ -252,7 +281,7 @@ export default function SearchInput({ initialEAN = "" }: { initialEAN?: string }
             />
           </svg>
         </a>
-      </div>
+      </motion.div>
     </>
   );
 }
