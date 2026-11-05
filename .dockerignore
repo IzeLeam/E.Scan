@@ -1,0 +1,11 @@
+node_modules
+.next
+.git
+.github
+*.md
+.env*
+Dockerfile
+docker-compose.yml
+# Ancienne version (client/ + server/), à supprimer du dépôt
+client
+server

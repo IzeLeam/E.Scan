@@ -1,0 +1,40 @@
+@import "tailwindcss";
+
+/* DA E.Scan : bleu marine + corail */
+@theme {
+  --color-navy: #102542;
+  --color-accent: #f87060;
+  --color-accent-hover: #ff8575;
+  --font-sans: var(--font-roboto), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-roboto-mono), ui-monospace, monospace;
+}
+
+html {
+  color-scheme: dark;
+  background: var(--color-navy);
+}
+
+body {
+  background:
+    radial-gradient(120% 60% at 50% 0%, rgb(248 112 96 / 0.08), transparent 60%),
+    var(--color-navy);
+  color: white;
+}
+
+::selection {
+  background: rgb(248 112 96 / 0.4);
+}
+
+/* Flux vidéo et calque de dessin injectés par quagga2 */
+.scanner-viewport video,
+.scanner-viewport canvas {
+  position: absolute;
+  inset: 0;
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover;
+}
+
+.scanner-viewport canvas.drawingBuffer {
+  opacity: 0.6;
+}

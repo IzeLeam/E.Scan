@@ -1,0 +1,23 @@
+services:
+  escan:
+    container_name: escan
+    restart: unless-stopped
+    build:
+      context: .
+      dockerfile: Dockerfile
+    env_file:
+      - path: .env
+        required: false   # LECLERC_STORE_CODE, 0772 par défaut
+    networks:
+      - traefik
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.escan.rule=Host(`escan.lucaprc.fr`)"
+      - "traefik.http.routers.escan.entrypoints=websecure"
+      - "traefik.http.routers.escan.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.escan.middlewares=default-private@file"
+      - "traefik.http.services.escan.loadbalancer.server.port=3000"
+
+networks:
+  traefik:
+    external: true
